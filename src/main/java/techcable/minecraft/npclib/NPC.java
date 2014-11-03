@@ -1,10 +1,15 @@
 package techcable.minecraft.npclib;
 
+import java.util.UUID;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+
 public interface NPC {
 	/**
 	 * Despawn this npc
 	 * 
-	 * Once despawned it can't be respawned
+	 * Once despawned it can be respawned
 	 * 
 	 * @return true if was able to despawn
 	 */
@@ -15,4 +20,42 @@ public interface NPC {
 	 */
 	public void faceLocation(Location toFace);
 	
+	/**
+	 * Get the entity associated with this npc
+	 * @return the entity
+	 */
+	public Entity getEntity();
+	/**
+	 * Retrieve the name of this npc
+	 * @return this npc's name
+	 */
+	public String getName();
+	/**
+	 * Get this npc's uuid
+	 * @return the uuid of this npc
+	 */
+	public UUID getUUID();
+	/**
+	 * Returns weather the npc is spawned
+	 * @return true if the npc is spawned
+	 */
+	public boolean isSpawned();
+	
+	/**
+	 * Set the current name of the npc
+	 * @param name the new name
+	 */
+	public void setName(String name);
+	
+	/**
+	 * Spawn this npc
+	 * @param toSpawn location to spawn this npc
+	 * @return true if the npc was able to spawn
+	 */
+	public boolean spawn(Location toSpawn);
+	
+	/**
+	 * Prevent this npc from ever spawning again and completly remove it from memmory
+	 */
+	public void destroy();
 }
