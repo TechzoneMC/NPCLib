@@ -6,7 +6,12 @@ public class NPCLib {
 	private NPCLib() {};
 	
 	public static NPCRegistry getNPCRegistry() {
-		if (hasCitizens());
+	    if (hasCitizens()) {
+	    
+	    } else {
+	    
+	    }
+	    throw new UnsupportedOperationException();
 	}
 	
 	public static boolean hasCitizens() {
