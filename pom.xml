@@ -1,0 +1,43 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>techcable.minecraft</groupId>
+  <artifactId>npclib</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  
+  <repositories>
+  	<repository>
+  		<id>techcable-repo</id>
+  		<url>http://raw.githubusercontent.com/Techcable/Maven-Repo/master</url>
+  	</repository>
+  	<repository>
+  		<id>bukkit-repo</id>
+  		<url>http://repo.bukkit.org/content/groups/public</url>
+  	</repository>
+  	<repository>
+  		<id>citizens-repo</id>
+  		<url>http://repo.citizensnpcs.co/</url>
+  	</repository>
+  </repositories>
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>org.bukkit</groupId>
+  		<artifactId>bukkit</artifactId>
+  		<version>1.7.9-R0.2</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.bukkit</groupId>
+  		<artifactId>craftbukkit</artifactId>
+  		<version>1.7.10-R0.1-SNAPSHOT</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>net.citizensnpcs</groupId>
+  		<artifactId>citizensapi</artifactId>
+  		<version>2.0.13-SNAPSHOT</version>
+  		<scope>provided</scope>
+  		<optional>true</optional>
+  	</dependency>
+  </dependencies>
+</project>
