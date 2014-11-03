@@ -5,14 +5,14 @@
   <version>1.0.0-SNAPSHOT</version>
   
   <repositories>
-  	<repository>
-  		<id>techcable-repo</id>
-  		<url>http://raw.githubusercontent.com/Techcable/Maven-Repo/master</url>
-  	</repository>
-  	<repository>
-  		<id>bukkit-repo</id>
-  		<url>http://repo.bukkit.org/content/groups/public</url>
-  	</repository>
+        <repository>
+                <id>md5-repo</id>
+                <url>http://repo.md-5.net/content/groups/public/</url>
+        </repository>
+        <repository>
+                <id>techcable-repo</id>
+                <url>http://raw.githubusercontent.com/Techcable/Maven-Repo/master</url>
+        </repository>
   	<repository>
   		<id>citizens-repo</id>
   		<url>http://repo.citizensnpcs.co/</url>
