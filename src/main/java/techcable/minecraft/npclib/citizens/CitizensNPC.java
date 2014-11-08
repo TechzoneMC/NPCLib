@@ -14,14 +14,17 @@ public class CitizensNPC {
 	setBacking(backing);
     }
 
-    private Map<NPC, CitizensNPC> cache = new WeakHashMap<>();
+    private EasyCache<NPC, CitizensNPC> cache;
 
     public CitizensNPC createNPC(NPC backing) {
-	if (cache.contains(backing)) return cache.get(backing);
-	else {
-	    CitizensNPC npc = new CitizensNPC(backing);
-	    cache.put(backing, npc);
-	    return npc;
-	}
+	    if (cache == null) {
+	        cache = new EasyCache(new Loader<NPC, CitizensNPC>() {
+	            @Override
+	            public CitizensNPC load(NPC backing) {
+	                return new CitizensNPC(backing);
+	            }
+	        });
+	    }
+	    return cache.get(backing);
     }
 }
