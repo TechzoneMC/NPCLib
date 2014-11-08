@@ -34,10 +34,10 @@ public class CitizensNPCRegistry implements techcable.minecraft.npclib.NPCRegist
 		return backing;
 	}
 	public NPC convertNPC(net.citizensnpcs.api.npc.NPC citizensNPC) {
-		throw new UnsupportedOperationException();
+		return CitizensNPC.createNPC(citizensNPC);
 	}
 	public net.citizensnpcs.api.npc.NPC convertNPC(NPC techcableNPC) {
-		throw new UnsupportedOperationException();
+		return ((CitizensNPC)techcableNPC).getBacking();
 	}
 	
 	public NPC createNPC(EntityType type, String name) {
@@ -78,15 +78,22 @@ public class CitizensNPCRegistry implements techcable.minecraft.npclib.NPCRegist
 	}
 	
 	public static CitizensNPCRegistry getRegistry() {
-	    if (CitizensAPI.getNamedRegistry("NPCLib") == null) {
-	        CitizensAPI.createNamedRegistry("NPCLib", makeDataStore());
+       	if (CitizensAPI.getNamedNPCRegistry("NPCLib") == null) {
+	        CitizensAPI.createNamedNPCRegistry("NPCLib", makeDataStore());
 	    }
-	    return CitizensAPI.getNamedRegistry("NPCLib");
+	    return new CitizensNPCRegistry(CitizensAPI.getNamedNPCRegistry("NPCLib"));
+	}
+	
+	public static CitizensNPCRegistry getRegistry(String registryName) {
+	    if (CitizensAPI.getNamedNPCRegistry("NPCLib." + registryName) == null) {
+	        CitizensAPI.createNamedNPCRegistry("NPCLib." + registryName, makeDataStore());
+	    }
+	    return new CitizensNPCRegistry(CitizensAPI.getNamedNPCRegistry("NPCLib." + registryName));
 	}
 	
 	private static NPCDataStore makeDataStore() {
-	    Storage storage = MemoryStorage();
-	    return new SimpleNPCDataStore(storage);
+	    Storage storage = new MemoryStorage();
+	    return SimpleNPCDataStore.create(storage);
 	}
 	
 	public static class MemoryStorage implements Storage {
