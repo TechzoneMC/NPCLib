@@ -15,6 +15,14 @@ public class NPCLib {
 	    }
 	}
 	
+	public static NPCRegistry getNPCRegistry(String name) {
+	    if (hasCitizens()) {
+	        return CitizensNPCRegistry.getRegistry(name);
+	    } else {
+	        throw new UnsupportedOperationException();
+	    }
+	}
+	
 	public static boolean hasCitizens() {
 		try {
 			Class.forName("net.citizensnpcs.api.CitizensAPI");
