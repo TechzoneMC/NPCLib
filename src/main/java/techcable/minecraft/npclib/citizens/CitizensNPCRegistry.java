@@ -4,7 +4,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.npc.SimpleNPCDataStore;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.MemoryDataKey;
+import net.citizensnpcs.api.util.Storage;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -69,6 +75,37 @@ public class CitizensNPCRegistry implements techcable.minecraft.npclib.NPCRegist
 			npcs.add(convertNPC(oldNPC));
 		}
 		return npcs;
+	}
+	
+	public static CitizensNPCRegistry getRegistry() {
+	    if (CitizensAPI.getNamedRegistry("NPCLib") == null) {
+	        CitizensAPI.createNamedRegistry("NPCLib", makeDataStore());
+	    }
+	    return CitizensAPI.getNamedRegistry("NPCLib");
+	}
+	
+	private static NPCDataStore makeDataStore() {
+	    Storage storage = MemoryStorage();
+	    return new SimpleNPCDataStore(storage);
+	}
+	
+	public static class MemoryStorage implements Storage {
+	    
+	    public DataKey dataKey = new MemoryDataKey();
+	    
+	    @Override
+	    public DataKey getKey(String root) {
+	        return dataKey.getRelative(root);
+	    }
+	    
+	    //NO Ops
+	    @Override
+	    public boolean load() {
+	        return true;
+	    }
+	    
+	    @Override
+	    public void save() {}
 	}
 	
 	private static class IDTracker {

@@ -1,5 +1,7 @@
 package techcable.minecraft.npclib.citizens;
 
+import techcable.minecraft.npclib.util.EasyCache;
+
 import net.citizensnpcs.api.npc.NPC;
 
 public class CitizensNPC {
