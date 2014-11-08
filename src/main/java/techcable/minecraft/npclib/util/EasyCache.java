@@ -21,9 +21,12 @@ public class EasyCache<K, V> {
         public V load(K key);
     }
     
-    @RequiredArgsConstructor
     @Getter
-    private static class LoaderCacheLoader<K, V> implements CacheLoader {
+    private static class LoaderCacheLoader<K, V> extends CacheLoader<K, V> {
+        
+        private LoaderCacheLoader(Loader<K, V> backing) {
+            this.backing = backing;
+        }
         private final Loader<K, V> backing;
         
         @Override
