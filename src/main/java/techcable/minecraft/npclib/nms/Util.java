@@ -1,5 +1,7 @@
 package techcable.minecraft.npclib.nms;
 
+import techcable.minecraft.npclib.NPC;
+
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -35,11 +37,12 @@ public class Util {
         getNMS().look(entity, (float) yaw - 90, (float) pitch);
     }
     
-    public static void setName(Entity entity, String name) {
+    public static void setName(NPC npc, String name) {
+        Entity entity = npc.getEntity();
         if (entity instanceof LivingEntity) {
             ((LivingEntity)entity).setCustomName(name);
             if (entity instanceof HumanEntity) {
-                getNMS().setHumanName((HumanEntity) entity, name);
+                getNMS().setName((HumanEntity)entity, name);
             }
         }
         
