@@ -39,13 +39,31 @@ public class Util {
     
     public static void setName(NPC npc, String name) {
         Entity entity = npc.getEntity();
-        if (entity instanceof LivingEntity) {
-            ((LivingEntity)entity).setCustomName(name);
-            if (entity instanceof HumanEntity) {
-                getNMS().setName((HumanEntity)entity, name);
-            }
+        if (!setName(entity, name) && entity instanceof HumanEntity) {
+        	try {
+        		getNMS().setName((HumanEntity)entity, name);
+        	} catch (Exception ex) {
+        		//Squishity squash
+        	}
         }
         
+    }
+    
+    /**
+     * Set the name of a living entity
+     * @param entity the entity that might be living
+     * @param name the new name of the entity
+     * @return true if successful
+     */
+    private static boolean setName(Entity entity, String name) {
+    	if (entity instanceof LivingEntity) {
+    		try {
+    			((LivingEntity)entity).setCustomName(name);
+    			return true;
+    		} catch (Exception ex) {
+    			return false;
+    		}
+    	} else return false;
     }
     
     public static Entity spawn(Location location, EntityType type, String name, UUID uuid) {
@@ -54,7 +72,7 @@ public class Util {
         }
         if (!type.isSpawnable()) throw new UnsupportedOperationException();
         Entity entity = location.getWorld().spawnEntity(location, type);
-	    setName(entity, name);
+	    
 	    return entity;
     }
 }

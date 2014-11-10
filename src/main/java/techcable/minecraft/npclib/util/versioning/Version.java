@@ -1,5 +1,7 @@
 package techcable.minecraft.npclib.util.versioning;
 
+import lombok.*;
+
 @Getter
 @RequiredArgsConstructor
 public abstract class Version {

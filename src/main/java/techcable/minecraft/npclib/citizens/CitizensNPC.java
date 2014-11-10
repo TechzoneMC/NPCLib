@@ -26,7 +26,7 @@ public class CitizensNPC implements techcable.minecraft.npclib.NPC {
 
     public static CitizensNPC createNPC(NPC backing) {
 	    if (cache == null) {
-	        cache = new EasyCache(new Loader<NPC, CitizensNPC>() {
+	        cache = new EasyCache<>(new Loader<NPC, CitizensNPC>() {
 	            @Override
 	            public CitizensNPC load(NPC backing) {
 	                return new CitizensNPC(backing);

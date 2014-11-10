@@ -1,7 +1,9 @@
 package techcable.minecraft.npclib.util.versioning;
 
+import lombok.*;
+
 @Getter
-public class CraftbukkitVersion implements Version {
+public class CraftbukkitVersion extends Version {
     private final String minecraftVersion;
     private final String packageVersion;
     public CraftbukkitVersion(String id, String minecraftVersion, String packageVersion) {

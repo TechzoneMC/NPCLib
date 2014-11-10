@@ -62,7 +62,7 @@ public class NMSNPC implements NPC {
 
 	public void setName(String name) {
 	    if (name == null) return;
-	    Util.setName(getEntity(), name);
+	    Util.setName(this, name);
 	    this.name = name;
 	}
 
