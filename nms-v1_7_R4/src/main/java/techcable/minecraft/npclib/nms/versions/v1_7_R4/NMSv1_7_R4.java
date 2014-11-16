@@ -1,4 +1,4 @@
-package techcable.minecraft.npclib.nms.v1_7_10;
+Bpackage techcable.minecraft.npclib.nms.v1_7_10;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
@@ -19,7 +19,7 @@ import org.bukkit.entity.HumanEntity;
 import techcable.minecraft.npclib.nms.NMS;
 import techcable.minecraft.npclib.util.versioning.Version;
 
-public class NMS1_7_10 implements NMS {
+public class NMSv1_7_R4 implements NMS {
     public void look(org.bukkit.entity.Entity entity, float pitch, float yaw) {
         Entity handle = getHandle(entity);
         if (handle == null) return;
