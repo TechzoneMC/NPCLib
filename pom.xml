@@ -4,6 +4,7 @@
   <artifactId>npclib-parent</artifactId>
   <name>NPC Lib</name>
   <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
   
   <repositories>
         <repository>
@@ -38,6 +39,7 @@
   <modules>
     <module>nms</module>
     <module>api</module>
+    <module>base</module>
     <module>citizens</module>
     <module>nms-v1_7_R4</module>
   </modules>

@@ -2,8 +2,6 @@ package techcable.minecraft.npclib;
 
 import techcable.minecraft.npclib.citizens.CitizensNPCRegistry;
 
-import net.citizensnpcs.api.CitizensAPI;
-
 public class NPCLib {
 	private NPCLib() {};
 	
@@ -26,10 +24,10 @@ public class NPCLib {
 	public static boolean hasCitizens() {
 		try {
 			Class.forName("net.citizensnpcs.api.CitizensAPI");
+			return true;
 		} catch (ClassNotFoundException e) {
 			return false;
 		}
-		return CitizensAPI.hasImplementation();
 	}
 	public static boolean hasNMS() {
 		return false;

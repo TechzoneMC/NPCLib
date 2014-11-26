@@ -14,7 +14,7 @@
   <dependencies>
     <dependency>
       <groupId>techcable.minecraft</groupId>
-      <artifactId>npclib-nms</artifactId>
+      <artifactId>npclib-api</artifactId>
       <version>${parent.version}</version>
       <scope>provided</scope>
     </dependency>

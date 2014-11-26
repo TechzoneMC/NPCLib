@@ -7,9 +7,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 
-import techcable.minecraft.npclib.util.versioning.VersionedClass;
-
-public interface NMS extends VersionedClass {
+public interface NMS {
     public void look(Entity entity, float pitch, float yaw);
     public HumanEntity spawnHuman(Location toSpawn, UUID uuid, String name);
     public void setName(HumanEntity human, String name);
