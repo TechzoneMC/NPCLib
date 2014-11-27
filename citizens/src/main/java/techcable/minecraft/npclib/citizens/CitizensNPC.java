@@ -73,4 +73,12 @@ public class CitizensNPC implements techcable.minecraft.npclib.NPC {
 	public void destroy() {
 	    getBacking().destroy();
 	}
+	@Override
+	public void setProtected(boolean protect) {
+		getBacking().setProtected(protect);
+	}
+	@Override
+	public boolean isProtected() {
+		return getBacking().isProtected();
+	}
 }

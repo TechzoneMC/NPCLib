@@ -10,6 +10,7 @@ import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import techcable.minecraft.npclib.NPC;
 import techcable.minecraft.npclib.nms.versions.v1_7_R4.network.NPCConnection;
 
+import net.minecraft.server.v1_7_R4.DamageSource;
 import net.minecraft.server.v1_7_R4.EntityPlayer;
 import net.minecraft.server.v1_7_R4.EnumGamemode;
 import net.minecraft.server.v1_7_R4.PlayerInteractManager;
@@ -28,5 +29,12 @@ public class EntityNPCPlayer extends EntityPlayer {
 		
 		setPosition(location.getX(), location.getY(), location.getZ());
 	}
-
+	
+	@Override
+	public boolean damageEntity(DamageSource source, float damage) {
+		if (npc.isProtected()) {
+			return false;
+		}
+		return super.damageEntity(source, damage);
+	}
 }

@@ -23,6 +23,9 @@ public class NMSNPC implements NPC {
         this.registry = registry;    
     }
     
+    @Setter(AccessLevel.NONE) //We have our own getters and setters
+    @Getter(AccessLevel.NONE)
+    private boolean protect;
     private final NMSRegistry registry;
     private Entity entity;
     private final UUID UUID;
@@ -71,7 +74,7 @@ public class NMSNPC implements NPC {
 
 	public boolean spawn(Location toSpawn) {
 	    if (!isSpawnable()) return false;
-	    Entity spawned = Util.spawn(toSpawn, getType(), getName(), getUUID());
+	    Entity spawned = Util.spawn(toSpawn, getType(), getName(), this);
 	    if (spawned != null) {
 	        setEntity(spawned);
 	        return true;
@@ -82,5 +85,15 @@ public class NMSNPC implements NPC {
 		if (isSpawned()) despawn();
 		this.spawnable = false;
 		if (getRegistry().getNpcMap().containsValue(this)) getRegistry().deregister(this); //Stack overflow errors beware
+	}
+
+	@Override
+	public void setProtected(boolean protect) {
+		this.protect = protect;
+	}
+	
+	@Override
+	public boolean isProtected() {
+		return protect;
 	}
 }

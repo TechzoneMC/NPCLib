@@ -70,13 +70,9 @@ public class Util {
     	} else return false;
     }
     
-    public static Entity spawn(Location location, EntityType type, String name, UUID uuid) {
+    public static Entity spawn(Location location, EntityType type, String name, NPC npc) {
         if (type.equals(EntityType.PLAYER)) {
-            return getNMS().spawnHuman(location, uuid, name);
-        }
-        if (!type.isSpawnable()) throw new UnsupportedOperationException();
-        Entity entity = location.getWorld().spawnEntity(location, type);
-	    
-	    return entity;
+            return getNMS().spawnPlayer(location, name, npc);
+        } else throw new UnsupportedOperationException();
     }
 }

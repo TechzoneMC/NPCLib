@@ -58,4 +58,17 @@ public interface NPC {
 	 * Prevent this npc from ever spawning again and completly remove it from memmory
 	 */
 	public void destroy();
+	
+	/**
+	 * Set the protected status of this NPC
+	 * true by default
+	 * @param protect whether or not this npc is invincible
+	 */
+	public void setProtected(boolean protect);
+	
+	/**
+	 * Check if the NPC is protected from damage
+	 * @return The protected status of the NPC
+	 */
+	public boolean isProtected();
 }
