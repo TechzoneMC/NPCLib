@@ -14,7 +14,11 @@ public class Util {
     private Util() {}
     
     public static NMS getNMS() {
-        throw new UnsupportedOperationException();
+    	try {
+    		return NMSVersion.getVersion(NMSVersion.determineCurrentVersion()).getNMS();
+    	} catch (UnknownNMSVersionException ex) {
+    		throw new UnsupportedOperationException("This version of minecraft isn't supported by NPCLib nms implementation. Please use citizens");
+    	}
     }
     
     public static void look(Entity entity, Location toLook) {

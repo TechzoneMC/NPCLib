@@ -15,12 +15,15 @@ import lombok.*;
 @Getter
 @Setter
 public class NMSNPC implements NPC {
-    public NMSNPC(UUID uuid, EntityType type) {
+	
+    public NMSNPC(UUID uuid, EntityType type, NMSRegistry registry) {
         if (!type.isSpawnable() && !type.equals(EntityType.PLAYER)) this.spawnable = false;
         this.type = type;
         this.UUID = uuid;
+        this.registry = registry;    
     }
     
+    private final NMSRegistry registry;
     private Entity entity;
     private final UUID UUID;
     private final EntityType type;
@@ -76,6 +79,8 @@ public class NMSNPC implements NPC {
 	}
 
 	public void destroy() {
-	    this.spawnable = false;
+		if (isSpawned()) despawn();
+		this.spawnable = false;
+		if (getRegistry().getNpcMap().containsValue(this)) getRegistry().deregister(this); //Stack overflow errors beware
 	}
 }

@@ -1,5 +1,6 @@
 package techcable.minecraft.npclib;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,7 +24,7 @@ public interface NPCRegistry {
 	 */
 	public NPC createNPC(EntityType type, UUID uuid, String name);
 	/**
-	 * Removes all data from the npc and deregisters it
+	 * Removes and destroy this npc from the registry
 	 * @param npc the npc to deregister
 	 */
 	public void deregister(NPC npc);
@@ -55,5 +56,5 @@ public interface NPCRegistry {
 	 * Retreive every npc in the registry
 	 * @return all the npcs in the registry
 	 */
-	public Set<NPC> listNpcs();
+	public Collection<? extends NPC> listNpcs();
 }

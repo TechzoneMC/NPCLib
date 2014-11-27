@@ -10,7 +10,7 @@ import lombok.*;
 public class EasyCache<K, V> {
     private final Cache<K, V> backing;
     public EasyCache(Loader<K, V> loader) {
-        backing = CacheBuilder.newBuilder().weakKeys().weakValues().build(new LoaderCacheLoader(loader));
+        backing = CacheBuilder.newBuilder().weakKeys().weakValues().build(new LoaderCacheLoader<K, V>(loader));
     }
     
     public V get(K key) {
