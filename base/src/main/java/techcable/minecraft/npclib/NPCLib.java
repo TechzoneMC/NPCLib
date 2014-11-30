@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 
 import techcable.minecraft.npclib.citizens.CitizensNPCRegistry;
 import techcable.minecraft.npclib.nms.NMSRegistry;
+import techcable.minecraft.npclib.nms.Util;
 
 public class NPCLib {
 	private NPCLib() {};
@@ -17,26 +18,34 @@ public class NPCLib {
 	public static NPCRegistry getNPCRegistry() {
 	    if (hasCitizens()) {
 	        return CitizensNPCRegistry.getRegistry();
-	    } else {
+	    } else if (hasNMS()) {
 	        if (defaultNMS == null) {
 	        	defaultNMS = new NMSRegistry();
 	        }
 	        return defaultNMS;
+	    } else {
+	    	throw new UnsupportedVersionException("This version of minecraft isn't supported, please install citizens");
 	    }
 	}
 	
 	public static NPCRegistry getNPCRegistry(String name) {
 	    if (hasCitizens()) {
 	        return CitizensNPCRegistry.getRegistry(name);
-	    } else {
+	    } else if (hasNMS()) {
 	        if (!registryMap.containsKey(name)) {
 	        	registryMap.put(name, new NMSRegistry());
 	        }
 	        return registryMap.get(name);
+	    } else {
+	    	throw new UnsupportedVersionException("This version of minecraft isn't supported, please install citizens");
 	    }
 	}
 	
-	public static boolean hasCitizens() {
+	public static boolean isSupported() {
+		return hasCitizens() || hasNMS();
+	}
+	
+	private static boolean hasCitizens() {
 		try {
 			Class.forName("net.citizensnpcs.api.CitizensAPI");
 		} catch (ClassNotFoundException e) {
@@ -44,7 +53,12 @@ public class NPCLib {
 		}
 		return Bukkit.getPluginManager().isPluginEnabled("Citizens");
 	}
-	public static boolean hasNMS() {
-		return false;
+	private static boolean hasNMS() {
+		try {
+			Util.getNMS();
+			return true;
+		} catch (Exception ex) {
+			return false;
+		}
 	}
 }
