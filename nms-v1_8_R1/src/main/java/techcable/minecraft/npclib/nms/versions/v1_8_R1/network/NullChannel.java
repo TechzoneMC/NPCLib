@@ -2,12 +2,12 @@ package techcable.minecraft.npclib.nms.versions.v1_8_R1.network;
 
 import java.net.SocketAddress;
 
-import net.minecraft.util.io.netty.channel.AbstractChannel;
-import net.minecraft.util.io.netty.channel.Channel;
-import net.minecraft.util.io.netty.channel.ChannelConfig;
-import net.minecraft.util.io.netty.channel.ChannelMetadata;
-import net.minecraft.util.io.netty.channel.ChannelOutboundBuffer;
-import net.minecraft.util.io.netty.channel.EventLoop;
+import io.netty.channel.AbstractChannel;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelConfig;
+import io.netty.channel.ChannelMetadata;
+import io.netty.channel.ChannelOutboundBuffer;
+import io.netty.channel.EventLoop;
 
 import lombok.*;
 

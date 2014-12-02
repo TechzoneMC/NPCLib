@@ -3,7 +3,6 @@ package techcable.minecraft.npclib.nms.versions.v1_8_R1;
 import java.lang.reflect.Field;
 import java.util.UUID;
 
-import net.minecraft.server.v1_8_R1.ChunkCoordinates;
 import net.minecraft.server.v1_8_R1.Entity;
 import net.minecraft.server.v1_8_R1.EntityHuman;
 import net.minecraft.server.v1_8_R1.EntityLiving;
@@ -11,7 +10,7 @@ import net.minecraft.server.v1_8_R1.IChatBaseComponent;
 import net.minecraft.server.v1_8_R1.MinecraftServer;
 import net.minecraft.server.v1_8_R1.World;
 import net.minecraft.server.v1_8_R1.WorldServer;
-import net.minecraft.util.com.mojang.authlib.GameProfile;
+import com.mojang.authlib.GameProfile;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

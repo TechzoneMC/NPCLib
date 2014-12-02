@@ -14,7 +14,7 @@ import net.minecraft.server.v1_8_R1.DamageSource;
 import net.minecraft.server.v1_8_R1.EntityPlayer;
 import net.minecraft.server.v1_8_R1.EnumGamemode;
 import net.minecraft.server.v1_8_R1.PlayerInteractManager;
-import net.minecraft.util.com.mojang.authlib.GameProfile;
+import com.mojang.authlib.GameProfile;
 
 import lombok.*;
 
