@@ -3,7 +3,7 @@
   <parent>
     <groupId>techcable.minecraft</groupId>
     <artifactId>npclib-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1</version>
   </parent>
   <artifactId>npclib-api</artifactId>
 </project>
