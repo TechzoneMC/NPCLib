@@ -41,6 +41,7 @@
     <module>api</module>
     <module>base</module>
     <module>citizens</module>
+    <module>nms-v1_7_R3</module>
     <module>nms-v1_7_R4</module>
     <module>nms-v1_8_R1</module>
   </modules>
