@@ -19,7 +19,7 @@
     </dependency>
     <dependency>
         <groupId>techcable.minecraft</groupId>
-        <artifactId>nms-v1_7_R4</artifactId>
+        <artifactId>nms-v1_7_R3</artifactId>
         <version>${parent.version}</version>
         <scope>compile</scope>
         <optional>true</optional>
