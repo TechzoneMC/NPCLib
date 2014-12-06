@@ -2,23 +2,46 @@ package techcable.minecraft.npclib.nms;
 
 import techcable.minecraft.npclib.NPC;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 
+import com.google.common.base.Throwables;
+
 public class Util {
     private Util() {}
     
+    
+    private static NMS nms;
     public static NMS getNMS() {
-    	try {
-    		return NMSVersion.getVersion(NMSVersion.determineCurrentVersion()).getNMS();
-    	} catch (UnknownNMSVersionException ex) {
-    		throw new UnsupportedOperationException("This version of minecraft isn't supported by NPCLib nms implementation. Please use citizens");
+    	if (nms == null) {
+    		try {
+        		String version = getVersion();
+        		Class<?> rawClass = Class.forName("techcable.minecraft.npclib.nms.versions." + version + ".NMS");
+        		Class<? extends NMS> nmsClass = rawClass.asSubclass(NMS.class);
+        		Constructor<? extends NMS> constructor = nmsClass.getConstructor();
+        		return constructor.newInstance();
+        	} catch (ClassNotFoundException ex) {
+        		throw new UnsupportedOperationException("Unsupported nms version", ex);
+        	} catch (InvocationTargetException ex) {
+        		throw Throwables.propagate(ex.getTargetException());
+        	} catch (Exception ex) {
+        		throw Throwables.propagate(ex);
+        	}
     	}
+    	return nms;
+    }
+    
+    public static String getVersion() {
+    	String packageName = Bukkit.getServer().getClass().getPackage().getName();
+    	return packageName.substring(packageName.lastIndexOf(".") + 1);
     }
     
     public static void look(Entity entity, Location toLook) {
