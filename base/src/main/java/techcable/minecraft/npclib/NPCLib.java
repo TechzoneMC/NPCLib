@@ -57,7 +57,7 @@ public class NPCLib {
 		try {
 			Util.getNMS();
 			return true;
-		} catch (Exception ex) {
+		} catch (UnsupportedOperationException ex) {
 			return false;
 		}
 	}
