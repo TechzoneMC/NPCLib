@@ -9,6 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 import lombok.*;
 
@@ -68,8 +69,16 @@ public class NMSNPC implements NPC {
 
 	public void setName(String name) {
 	    if (name == null) return;
-	    Util.setName(this, name);
 	    this.name = name;
+	    if (isSpawned()) {
+	    	if (getEntity() instanceof Player) {
+	    		Location current = getEntity().getLocation();
+			    despawn();
+			    spawn(current);
+	    	} else if (getEntity() instanceof LivingEntity) {
+	    		((LivingEntity)getEntity()).setCustomName(name);
+	    	}
+	    }
 	}
 
 	public boolean spawn(Location toSpawn) {

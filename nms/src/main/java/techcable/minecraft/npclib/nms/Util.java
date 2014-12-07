@@ -63,36 +63,7 @@ public class Util {
 
         getNMS().look(entity, (float) yaw - 90, (float) pitch);
     }
-    
-    public static void setName(NPC npc, String name) {
-        Entity entity = npc.getEntity();
-        if (!setName(entity, name) && entity instanceof HumanEntity) {
-        	try {
-        		getNMS().setName((HumanEntity)entity, name);
-        	} catch (Exception ex) {
-        		//Squishity squash
-        	}
-        }
-        
-    }
-    
-    /**
-     * Set the name of a living entity
-     * @param entity the entity that might be living
-     * @param name the new name of the entity
-     * @return true if successful
-     */
-    private static boolean setName(Entity entity, String name) {
-    	if (entity instanceof LivingEntity) {
-    		try {
-    			((LivingEntity)entity).setCustomName(name);
-    			return true;
-    		} catch (Exception ex) {
-    			return false;
-    		}
-    	} else return false;
-    }
-    
+   
     public static Entity spawn(Location location, EntityType type, String name, NPC npc) {
         if (type.equals(EntityType.PLAYER)) {
             return getNMS().spawnPlayer(location, name, npc);

@@ -22,21 +22,18 @@
         <artifactId>nms-v1_7_R3</artifactId>
         <version>${parent.version}</version>
         <scope>compile</scope>
-        <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>techcable.minecraft</groupId>
       <artifactId>npclib-nms-v1_7_R4</artifactId>
       <version>${parent.version}</version>
-      <scope>compiled</scope>
-      <optional>true</optional>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>techcable.minecraft</groupId>
       <artifactId>npclib-nms-v1_8_R1</artifactId>
       <version>${parent.version}</version>
-      <scope>compiled</scope>
-      <optional>true</optional>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 </project>

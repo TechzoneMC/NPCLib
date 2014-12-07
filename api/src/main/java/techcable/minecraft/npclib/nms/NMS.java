@@ -13,6 +13,5 @@ import techcable.minecraft.npclib.NPC;
 public interface NMS {
     public void look(Entity entity, float pitch, float yaw);
     public Player spawnPlayer(Location toSpawn, String name, NPC npc);
-    public void setName(HumanEntity human, String name);
     public NPC getAsNPC(Entity entity);
 }

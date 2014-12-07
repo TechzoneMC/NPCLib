@@ -104,13 +104,6 @@ public class NMS implements techcable.minecraft.npclib.nms.NMS {
     	}
     }
 	
-	private Field nameField = ReflectUtil.makeField(EntityHuman.class, "name");
-	
-	@Override
-	public void setName(HumanEntity human, String name) {
-		ReflectUtil.setField(nameField, getHandle(human), name);
-	}
-	
 	public static MinecraftServer getServer() {
 		return getHandle(Bukkit.getServer());
 	}
