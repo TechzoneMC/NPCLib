@@ -38,41 +38,39 @@ public class CitizensNPC implements techcable.minecraft.npclib.NPC {
     }
     
     //Implementation
-    
+    @Override
 	public boolean despawn() {
-	    return getBacking().despawn();
-	}
-
+	    if (isSpawned()) getBacking().despawn();
+	    getBacking().destroy();
+	    return true;
+    }
+	@Override
 	public void faceLocation(Location toFace) {
 	    getBacking().faceLocation(toFace);
 	}
-	
+	@Override
 	public Entity getEntity() {
 	    return getBacking().getEntity();
 	}
-
+	@Override
 	public String getName() {
 	    return getBacking().getName();
 	}
-
+	@Override
 	public UUID getUUID() {
 	    return getBacking().getUniqueId();
 	}
-
+	@Override
 	public boolean isSpawned() {
 	    return getBacking().isSpawned();
 	}
-
+	@Override
 	public void setName(String name) {
 	    getBacking().setName(name);
 	}
-
+	@Override
 	public boolean spawn(Location toSpawn) {
 	    return getBacking().spawn(toSpawn);
-	}
-
-	public void destroy() {
-	    getBacking().destroy();
 	}
 	@Override
 	public void setProtected(boolean protect) {

@@ -9,7 +9,8 @@ public interface NPC {
 	/**
 	 * Despawn this npc
 	 * 
-	 * Once despawned it can be respawned
+	 * Once despawned it can not be respawned
+	 * It will be deregistered from the registry
 	 * 
 	 * @return true if was able to despawn
 	 */
@@ -53,11 +54,6 @@ public interface NPC {
 	 * @return true if the npc was able to spawn
 	 */
 	public boolean spawn(Location toSpawn);
-	
-	/**
-	 * Prevent this npc from ever spawning again and completly remove it from memmory
-	 */
-	public void destroy();
 	
 	/**
 	 * Set the protected status of this NPC

@@ -38,6 +38,7 @@ public class NMSRegistry implements NPCRegistry {
 	@Override
 	public NPC createNPC(EntityType type, UUID uuid, String name) {
 		if (!ArrayUtils.contains(SUPPORTED_TYPES, type)) throw new UnsupportedOperationException(type.toString() + " is an Unsupported Entity Type");
+		if (npcMap.containsKey(uuid)) throw new IllegalArgumentException("NPC with UUID " + uuid.toString() + " is already created");
 		NMSNPC npc = new NMSNPC(uuid, type, this);
 		npc.setName(name);
 		npcMap.put(uuid, npc);
@@ -47,12 +48,12 @@ public class NMSRegistry implements NPCRegistry {
 	@Override
 	public void deregister(NPC npc) {
 		if (!isRegistered(npc)) return;
-		npcMap.remove(npc.getUUID());
-		npc.destroy();
+		if (npc.isSpawned()) throw new IllegalStateException("NPC is spawned; can't deregister");
+		getNpcMap().remove(npc.getUUID());
 	}
 
 	public boolean isRegistered(NPC npc) {
-		return npcMap.containsValue(npc);
+		return npcMap.containsKey(npc.getUUID());
 	}
 	
 	@Override

@@ -18,7 +18,7 @@ import lombok.*;
 public class NMSNPC implements NPC {
 	
     public NMSNPC(UUID uuid, EntityType type, NMSRegistry registry) {
-        if (!type.isSpawnable() && !type.equals(EntityType.PLAYER)) this.spawnable = false;
+        if (!type.equals(EntityType.PLAYER)) throw new UnsupportedOperationException("Can only spawn players");
         this.type = type;
         this.UUID = uuid;
         this.registry = registry;    
@@ -31,19 +31,23 @@ public class NMSNPC implements NPC {
     private Entity entity;
     private final UUID UUID;
     private final EntityType type;
-    private boolean spawnable = true;
     private String name = "";
+    
+    @Override
 	public boolean despawn() {
 	    if (!isSpawned()) return false;
 	    getEntity().remove();
 	    setEntity(null);
+	    getRegistry().deregister(this);
 	    return true;
 	}
-
+    
+    @Override
 	public void faceLocation(Location toFace) {
 	    Util.look(getEntity(), toFace);
 	}
 	
+    @Override
 	public String getName() {
 	    String name = this.name;
 	    if (getEntity() == null) return name;
@@ -58,15 +62,12 @@ public class NMSNPC implements NPC {
 	    return name;
 	}
     
-    public boolean isSpawnable() {
-        if (isSpawned()) return false;
-        return this.spawnable;
-    }
-    
+    @Override
 	public boolean isSpawned() {
 	    return entity != null;
 	}
 
+	@Override
 	public void setName(String name) {
 	    if (name == null) return;
 	    this.name = name;
@@ -81,19 +82,14 @@ public class NMSNPC implements NPC {
 	    }
 	}
 
+	@Override
 	public boolean spawn(Location toSpawn) {
-	    if (!isSpawnable()) return false;
+	    if (isSpawned()) return false;
 	    Entity spawned = Util.spawn(toSpawn, getType(), getName(), this);
 	    if (spawned != null) {
 	        setEntity(spawned);
 	        return true;
 	    } else return false;
-	}
-
-	public void destroy() {
-		if (isSpawned()) despawn();
-		this.spawnable = false;
-		if (getRegistry().getNpcMap().containsValue(this)) getRegistry().deregister(this); //Stack overflow errors beware
 	}
 
 	@Override

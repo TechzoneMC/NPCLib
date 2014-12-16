@@ -24,7 +24,9 @@ public interface NPCRegistry {
 	 */
 	public NPC createNPC(EntityType type, UUID uuid, String name);
 	/**
-	 * Removes and destroy this npc from the registry
+	 * Removes this npc from the registry
+	 * Be careful not to remove despawned npcs
+	 * @throws IllegalStateException if the npc is spawned
 	 * @param npc the npc to deregister
 	 */
 	public void deregister(NPC npc);

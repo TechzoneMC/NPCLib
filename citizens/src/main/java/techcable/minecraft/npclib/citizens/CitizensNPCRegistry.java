@@ -45,11 +45,12 @@ public class CitizensNPCRegistry implements techcable.minecraft.npclib.NPCRegist
 	}
 
 	public NPC createNPC(EntityType type, UUID uuid, String name) {
-		if (uuidTracker.isUsed(uuid)) throw new RuntimeException("uuid is already in use");
+		if (uuidTracker.isUsed(uuid)) throw new IllegalArgumentException("uuid is already in use");
 		return convertNPC(getBacking().createNPC(type, uuid, idTracker.getNextId(), name));
 	}
 
 	public void deregister(NPC npc) {
+		if (npc.isSpawned()) throw new IllegalStateException("Npc is spawned");
 		getBacking().deregister(convertNPC(npc));
 	}
 
