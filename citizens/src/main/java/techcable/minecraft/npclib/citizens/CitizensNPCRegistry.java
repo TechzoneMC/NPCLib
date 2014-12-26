@@ -21,7 +21,6 @@ import techcable.minecraft.npclib.NPC;
 
 public class CitizensNPCRegistry implements techcable.minecraft.npclib.NPCRegistry {
 	private NPCRegistry backing;
-	private UUIDTracker uuidTracker = new UUIDTracker();
 	private IDTracker idTracker = new IDTracker();
 	
 	public CitizensNPCRegistry(NPCRegistry backing) {
@@ -41,11 +40,11 @@ public class CitizensNPCRegistry implements techcable.minecraft.npclib.NPCRegist
 	}
 	
 	public NPC createNPC(EntityType type, String name) {
-		return createNPC(type, uuidTracker.getNextUUID(), name);
+		return createNPC(type, UUID.randomUUID(), name);
 	}
 
 	public NPC createNPC(EntityType type, UUID uuid, String name) {
-		if (uuidTracker.isUsed(uuid)) throw new IllegalArgumentException("uuid is already in use");
+		if (getByUUID(uuid) != null) throw new IllegalArgumentException("uuid is already in use");
 		return convertNPC(getBacking().createNPC(type, uuid, idTracker.getNextId(), name));
 	}
 
@@ -147,28 +146,6 @@ public class CitizensNPCRegistry implements techcable.minecraft.npclib.NPCRegist
 		}
 		public boolean isUsed(int id) {
 			return usedIds.contains(id);
-		}
-	}
-	
-	public static class UUIDTracker {
-		private Set<UUID> usedUUIDs = new HashSet<>();
-		
-		public boolean isUsed(UUID uuid) {
-			return usedUUIDs.contains(uuid);
-		}
-		
-		public void removeUUID(UUID uuid) {
-			usedUUIDs.remove(uuid);
-		}
-		public void useUUID(UUID uuid)  {
-			if (usedUUIDs.contains(uuid)) throw new RuntimeException("UUID is already in use");
-			usedUUIDs.remove(uuid);
-		}
-		
-		public UUID getNextUUID() {
-			UUID next = UUID.randomUUID();
-			if (isUsed(next)) return getNextUUID();
-			else return next;
 		}
 	}
 }
