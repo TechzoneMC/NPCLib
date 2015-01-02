@@ -8,12 +8,8 @@
   
   <repositories>
         <repository>
-                <id>md5-repo</id>
-                <url>http://repo.md-5.net/content/groups/public/</url>
-        </repository>
-        <repository>
                 <id>techcable-repo</id>
-                <url>http://raw.githubusercontent.com/Techcable/Maven-Repo/master</url>
+                <url>http://repo.techcable.net/content/groups/public/</url>
         </repository>
   	<repository>
   		<id>citizens-repo</id>
@@ -59,4 +55,17 @@
   		</plugin>
   	</plugins>
   </build>
+
+  <distributionManagement>
+    <repository>
+      <id>techcable-repo</id>
+      <name>Releases</name>
+      <url>http://repo.techcable.net/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>techcable-repo</id>
+      <name>Snapshots</name>
+      <url>http://repo.techcable.net/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>
