@@ -19,19 +19,15 @@ import com.google.common.collect.Sets;
 
 import techcable.minecraft.npclib.NPC;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class CitizensNPCRegistry implements techcable.minecraft.npclib.NPCRegistry {
-	private NPCRegistry backing;
+	@Getter
+	private final NPCRegistry backing;
 	private IDTracker idTracker = new IDTracker();
-	
-	public CitizensNPCRegistry(NPCRegistry backing) {
-		setBacking(backing);
-	}
-	public void setBacking(NPCRegistry backing) {
-		this.backing = backing;
-	}
-	public NPCRegistry getBacking() {
-		return backing;
-	}
+
 	public NPC convertNPC(net.citizensnpcs.api.npc.NPC citizensNPC) {
 		return CitizensNPC.createNPC(citizensNPC);
 	}

@@ -5,18 +5,15 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
+import lombok.RequiredArgsConstructor;
+
 import net.citizensnpcs.api.npc.NPC;
 
+@RequiredArgsConstructor
 public class CitizensNPC implements techcable.minecraft.npclib.NPC {
-    private NPC backing;
+    private final NPC backing;
     public NPC getBacking() {
-	return backing;
-    }
-    public void setBacking(NPC backing) {
-	this.backing = backing;
-    }
-    private CitizensNPC(NPC backing) {
-	setBacking(backing);
+    	return backing;
     }
 
     public static CitizensNPC createNPC(NPC backing) {
