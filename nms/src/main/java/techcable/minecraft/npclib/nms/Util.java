@@ -4,6 +4,8 @@ import techcable.minecraft.npclib.NPC;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -12,6 +14,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 import com.google.common.base.Throwables;
 
@@ -68,5 +71,16 @@ public class Util {
         if (type.equals(EntityType.PLAYER)) {
             return getNMS().spawnPlayer(location, name, npc);
         } else throw new UnsupportedOperationException();
+    }
+    
+    public static Player[] getNearbyPlayers(int range, Location l) {
+    	List<Player> nearby = new ArrayList<>(12);
+    	for (Player p : Bukkit.getOnlinePlayers()) {
+    		double distance = p.getLocation().distanceSquared(l);
+    		if (distance <= range) {
+    			nearby.add(p);
+    		}
+    	}
+    	return nearby.toArray(new Player[nearby.size()]);
     }
 }

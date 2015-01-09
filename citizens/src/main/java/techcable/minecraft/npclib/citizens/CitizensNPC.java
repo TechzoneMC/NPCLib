@@ -4,9 +4,9 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import lombok.RequiredArgsConstructor;
-
 import net.citizensnpcs.api.npc.NPC;
 
 @RequiredArgsConstructor
@@ -63,4 +63,10 @@ public class CitizensNPC implements techcable.minecraft.npclib.NPC {
 	public boolean isProtected() {
 		return getBacking().isProtected();
 	}
+
+	@Override
+	public void update() {}
+
+	@Override
+	public void update(Player... players) {}
 }

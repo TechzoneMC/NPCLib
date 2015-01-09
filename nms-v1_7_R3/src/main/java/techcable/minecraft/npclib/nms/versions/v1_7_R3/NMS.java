@@ -117,6 +117,12 @@ public class NMS implements techcable.minecraft.npclib.nms.NMS {
 			return null;
 		}
 	}
+
+	@Override
+	public void notifyOfSpawn(Player[] toNotify, Player... players) {}
+
+	@Override
+	public void notifyOfDespawn(Player[] toNotify, Player... npcs) {}
 	
 	
 }

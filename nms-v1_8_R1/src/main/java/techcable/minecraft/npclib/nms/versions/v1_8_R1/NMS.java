@@ -6,12 +6,18 @@ import java.util.UUID;
 import net.minecraft.server.v1_8_R1.Entity;
 import net.minecraft.server.v1_8_R1.EntityHuman;
 import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
 import net.minecraft.server.v1_8_R1.IChatBaseComponent;
 import net.minecraft.server.v1_8_R1.MinecraftServer;
+import net.minecraft.server.v1_8_R1.Packet;
+import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_8_R1.World;
 import net.minecraft.server.v1_8_R1.WorldServer;
+
 import com.mojang.authlib.GameProfile;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -19,6 +25,7 @@ import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
@@ -87,6 +94,19 @@ public class NMS implements techcable.minecraft.npclib.nms.NMS {
     	return ((CraftHumanEntity)bukkitHuman).getHandle();
     }
     
+    public static EntityPlayer getHandle(Player bukkitPlayer) {
+    	if (!(bukkitPlayer instanceof CraftPlayer)) return null;
+    	return ((CraftPlayer)bukkitPlayer).getHandle();
+    }
+    
+    public static EntityPlayer[] getHandles(Player[] bukkitPlayers) {
+    	EntityPlayer[] handles = new EntityPlayer[bukkitPlayers.length];
+    	for (int i = 0; i < bukkitPlayers.length; i++) {
+    		handles[i] = getHandle(bukkitPlayers[i]);
+    	}
+    	return handles;
+    }
+    
     public static MinecraftServer getHandle(org.bukkit.Server bukkitServer) {
     	if (bukkitServer instanceof CraftServer) {
     		return ((CraftServer)bukkitServer).getServer();
@@ -116,6 +136,27 @@ public class NMS implements techcable.minecraft.npclib.nms.NMS {
 			return null;
 		}
 	}
+
+	@Override
+	public void notifyOfSpawn(Player[] bukkitToNotify, Player... npcs) {
+		EntityPlayer[] nmsToNotify = getHandles(bukkitToNotify);
+		EntityPlayer[] nmsNpcs = getHandles(npcs);
+		PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, nmsNpcs);
+		sendPacketTo(nmsToNotify, packet);
+	}
+
+	@Override
+	public void notifyOfDespawn(Player[] bukkitToNotify, Player... npcs) {
+		EntityPlayer[] nmsToNotify = getHandles(bukkitToNotify);
+		EntityPlayer[] nmsNpcs = getHandles(npcs);
+		PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, nmsNpcs);
+		sendPacketTo(nmsToNotify, packet);
+	}
 	
-	
+	public void sendPacketTo(EntityPlayer[] nmsToSend, Packet packet) {
+		for (EntityPlayer toSend : nmsToSend) {
+			if (toSend == null) continue;
+			toSend.playerConnection.sendPacket(packet);
+		}
+	}
 }

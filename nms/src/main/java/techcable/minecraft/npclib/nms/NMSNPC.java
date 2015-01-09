@@ -38,6 +38,7 @@ public class NMSNPC implements NPC {
 	    if (!isSpawned()) return false;
 	    getEntity().remove();
 	    setEntity(null);
+	    update();
 	    getRegistry().deregister(this);
 	    return true;
 	}
@@ -88,6 +89,7 @@ public class NMSNPC implements NPC {
 	    Entity spawned = Util.spawn(toSpawn, getType(), getName(), this);
 	    if (spawned != null) {
 	        setEntity(spawned);
+	        update();
 	        return true;
 	    } else return false;
 	}
@@ -100,5 +102,16 @@ public class NMSNPC implements NPC {
 	@Override
 	public boolean isProtected() {
 		return protect;
+	}
+
+	@Override
+	public void update() {
+		update(Util.getNearbyPlayers(128, getEntity().getLocation()));
+	}
+
+	@Override
+	public void update(Player... players) {
+		if (isSpawned()) Util.getNMS().notifyOfSpawn(players, (Player)getEntity());
+		else Util.getNMS().notifyOfDespawn(players, (Player)getEntity());
 	}
 }
