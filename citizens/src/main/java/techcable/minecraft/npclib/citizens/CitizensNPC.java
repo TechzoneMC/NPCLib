@@ -70,7 +70,4 @@ public class CitizensNPC implements techcable.minecraft.npclib.NPC {
 
 	@Override
 	public void update() {}
-
-	@Override
-	public void update(Player... players) {}
 }

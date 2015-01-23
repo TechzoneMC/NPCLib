@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 public interface NPC {
 	/**
@@ -70,15 +71,7 @@ public interface NPC {
 	public boolean isProtected();
 	
 	/**
-	 * This method needs to be called on 1.8 so players can see the npc
-	 * Make this npc visible to nearby players
+	 * Call this method every tick to update the npc
 	 */
 	public void update();
-	
-	/**
-	 * This method needs to be called on 1.8 so players can see the npc
-	 * Make this npc visible to specified players
-	 * @param players players to make the npc visible for
-	 */
-	public void update(Player... players);
 }

@@ -16,4 +16,5 @@ public interface NMS {
     public NPC getAsNPC(Entity entity);
     public void notifyOfSpawn(Player[] toNotify, Player... npcs); //Sends a PacketPlayOutPlayerInfo add-player on 1.8
     public void notifyOfDespawn(Player[] toNotify, Player... npcs); //Sends a PacketPlayOutPlayerInfo remove-player on 1.8
+    public void notifyOfEquipmentChange(Player[] toNotify, Player npc);
 }

@@ -7,8 +7,11 @@ import net.minecraft.server.v1_7_R3.ChunkCoordinates;
 import net.minecraft.server.v1_7_R3.Entity;
 import net.minecraft.server.v1_7_R3.EntityHuman;
 import net.minecraft.server.v1_7_R3.EntityLiving;
+import net.minecraft.server.v1_7_R3.EntityPlayer;
 import net.minecraft.server.v1_7_R3.IChatBaseComponent;
 import net.minecraft.server.v1_7_R3.MinecraftServer;
+import net.minecraft.server.v1_7_R3.Packet;
+import net.minecraft.server.v1_7_R3.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_7_R3.World;
 import net.minecraft.server.v1_7_R3.WorldServer;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
@@ -20,6 +23,7 @@ import org.bukkit.craftbukkit.v1_7_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_7_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_7_R3.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
@@ -88,6 +92,11 @@ public class NMS implements techcable.minecraft.npclib.nms.NMS {
     	return ((CraftHumanEntity)bukkitHuman).getHandle();
     }
     
+    public static EntityPlayer getHandle(Player bukkitPlayer) {
+    	if (!(bukkitPlayer instanceof CraftPlayer)) return null;
+    	return ((CraftPlayer)bukkitPlayer).getHandle();
+    }
+    
     public static MinecraftServer getHandle(org.bukkit.Server bukkitServer) {
     	if (bukkitServer instanceof CraftServer) {
     		return ((CraftServer)bukkitServer).getServer();
@@ -124,5 +133,27 @@ public class NMS implements techcable.minecraft.npclib.nms.NMS {
 	@Override
 	public void notifyOfDespawn(Player[] toNotify, Player... npcs) {}
 	
+	@Override
+	public void notifyOfEquipmentChange(Player[] toNotify, Player rawNpc) {
+	    EntityPlayer npc = getHandle(rawNpc);
+	    Packet[] packets = new Packet[5];
+	    for (int i = 0; i < 5; i++) {
+	        packets[i] = new PacketPlayOutEntityEquipment(npc.getId(), i, npc.getEquipment(i));
+	    }
+	    sendPacketsTo(toNotify, packets);
+	}
 	
+	public void sendPacketsTo(Player[] recipients, Packet... packets) {
+	    EntityPlayer[] nmsToSend = new EntityPlayer[recipients.length];
+	    for (int i = 0; i < recipients.length; i++) {
+	        nmsToSend[i] = getHandle(recipients[i]);
+	    }
+		for (EntityPlayer recipient : nmsToSend) {
+			if (recipient == null) continue;
+			for (Packet packet : packets) {
+			    if (packet == null) continue;
+			    recipient.playerConnection.sendPacket(packet);
+			}
+		}
+	}
 }

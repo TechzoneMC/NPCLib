@@ -109,9 +109,9 @@ public class NMSNPC implements NPC {
 		update(Util.getNearbyPlayers(128, getEntity().getLocation()));
 	}
 
-	@Override
 	public void update(Player... players) {
 		if (isSpawned()) Util.getNMS().notifyOfSpawn(players, (Player)getEntity());
 		else Util.getNMS().notifyOfDespawn(players, (Player)getEntity());
+		Util.getNMS().notifyOfEquipmentChange(players, (Player)getEntity());
 	}
 }

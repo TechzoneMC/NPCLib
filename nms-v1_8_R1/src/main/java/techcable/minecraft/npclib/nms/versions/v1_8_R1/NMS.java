@@ -12,6 +12,7 @@ import net.minecraft.server.v1_8_R1.IChatBaseComponent;
 import net.minecraft.server.v1_8_R1.MinecraftServer;
 import net.minecraft.server.v1_8_R1.Packet;
 import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_8_R1.World;
 import net.minecraft.server.v1_8_R1.WorldServer;
 
@@ -138,25 +139,37 @@ public class NMS implements techcable.minecraft.npclib.nms.NMS {
 	}
 
 	@Override
-	public void notifyOfSpawn(Player[] bukkitToNotify, Player... npcs) {
-		EntityPlayer[] nmsToNotify = getHandles(bukkitToNotify);
+	public void notifyOfSpawn(Player[] toNotify, Player... npcs) {
 		EntityPlayer[] nmsNpcs = getHandles(npcs);
 		PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, nmsNpcs);
-		sendPacketTo(nmsToNotify, packet);
+		sendPacketsTo(toNotify, packet);
 	}
 
 	@Override
-	public void notifyOfDespawn(Player[] bukkitToNotify, Player... npcs) {
-		EntityPlayer[] nmsToNotify = getHandles(bukkitToNotify);
+	public void notifyOfDespawn(Player[] toNotify, Player... npcs) {
 		EntityPlayer[] nmsNpcs = getHandles(npcs);
 		PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, nmsNpcs);
-		sendPacketTo(nmsToNotify, packet);
+		sendPacketsTo(toNotify, packet);
 	}
 	
-	public void sendPacketTo(EntityPlayer[] nmsToSend, Packet packet) {
-		for (EntityPlayer toSend : nmsToSend) {
-			if (toSend == null) continue;
-			toSend.playerConnection.sendPacket(packet);
+	@Override
+	public void notifyOfEquipmentChange(Player[] toNotify, Player rawNpc) {
+	    EntityPlayer npc = getHandle(rawNpc);
+	    Packet[] packets = new Packet[5];
+	    for (int i = 0; i < 5; i++) {
+	        packets[i] = new PacketPlayOutEntityEquipment(npc.getId(), i, npc.getEquipment(i));
+	    }
+	    sendPacketsTo(toNotify, packets);
+	}
+	
+	public void sendPacketsTo(Player[] recipients, Packet... packets) {
+	    EntityPlayer[] nmsRecipients = getHandles(recipients);
+		for (EntityPlayer recipient : nmsRecipients) {
+			if (recipient == null) continue;
+			for (Packet packet : packets) {
+			    if (packet == null) continue;
+			    recipient.playerConnection.sendPacket(packet);
+			}
 		}
 	}
 }
