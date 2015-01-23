@@ -6,18 +6,21 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.npc.NPC;
 
+import lombok.*;
+
+@Getter
 @RequiredArgsConstructor
 public class CitizensNPC implements techcable.minecraft.npclib.NPC {
-    private final NPC backing;
+    private final UUID id;
+    private final CitizensNPCRegistry registry;
     public NPC getBacking() {
-    	return backing;
+    	return getRegistry().getBacking().getByUniqueId(getId());
     }
 
-    public static CitizensNPC createNPC(NPC backing) {
-    	return new CitizensNPC(backing);
+    public static CitizensNPC createNPC(NPC backing, CitizensNPCRegistry registry) {
+    	return new CitizensNPC(backing.getUniqueId(), registry);
     }
     
     //Implementation
@@ -25,6 +28,7 @@ public class CitizensNPC implements techcable.minecraft.npclib.NPC {
 	public boolean despawn() {
 	    if (isSpawned()) getBacking().despawn();
 	    getBacking().destroy();
+	    getRegistry().deregister(this);
 	    return true;
     }
 	@Override

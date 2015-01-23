@@ -1,5 +1,8 @@
 package techcable.minecraft.npclib.citizens;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -26,13 +29,14 @@ import lombok.RequiredArgsConstructor;
 public class CitizensNPCRegistry implements techcable.minecraft.npclib.NPCRegistry {
 	@Getter
 	private final NPCRegistry backing;
+	private final Map<UUID, NPC> npcMap = new HashMap<>();
 	private IDTracker idTracker = new IDTracker();
 
-	public NPC convertNPC(net.citizensnpcs.api.npc.NPC citizensNPC) {
-		return CitizensNPC.createNPC(citizensNPC);
+	public NPC convertNPC(net.citizensnpcs.api.npc.NPC citizensNpc) {
+		return npcMap.get(citizensNpc.getUniqueId());
 	}
-	public net.citizensnpcs.api.npc.NPC convertNPC(NPC techcableNPC) {
-		return ((CitizensNPC)techcableNPC).getBacking();
+	public net.citizensnpcs.api.npc.NPC convertNPC(NPC techcableNpc) {
+		return ((CitizensNPC)techcableNpc).getBacking();
 	}
 	
 	public NPC createNPC(EntityType type, String name) {
@@ -41,20 +45,25 @@ public class CitizensNPCRegistry implements techcable.minecraft.npclib.NPCRegist
 
 	public NPC createNPC(EntityType type, UUID uuid, String name) {
 		if (getByUUID(uuid) != null) throw new IllegalArgumentException("uuid is already in use");
-		return convertNPC(getBacking().createNPC(type, uuid, idTracker.getNextId(), name));
+		net.citizensnpcs.api.npc.NPC npc = getBacking().createNPC(type, uuid, idTracker.getNextId(), name);
+		NPC techcableNpc = CitizensNPC.createNPC(npc, this);
+		npcMap.put(npc.getUniqueId(), techcableNpc);
+		return techcableNpc;
 	}
 
 	public void deregister(NPC npc) {
 		if (npc.isSpawned()) throw new IllegalStateException("Npc is spawned");
 		getBacking().deregister(convertNPC(npc));
+		npcMap.remove(npc.getUUID());
 	}
 
 	public void deregisterAll() {
 		getBacking().deregisterAll();
+		npcMap.clear();
 	}
 
 	public NPC getByUUID(UUID uuid) {
-		return convertNPC(getBacking().getByUniqueId(uuid));
+		return npcMap.get(uuid);
 	}
 
 	public NPC getAsNPC(Entity entity) {
@@ -65,12 +74,8 @@ public class CitizensNPCRegistry implements techcable.minecraft.npclib.NPCRegist
 		return getBacking().isNPC(entity);
 	}
 
-	public Set<NPC> listNpcs() {
-		Set<NPC> npcs = new HashSet<>();
-		for (net.citizensnpcs.api.npc.NPC oldNPC : getBacking()) {
-			npcs.add(convertNPC(oldNPC));
-		}
-		return npcs;
+	public Collection<NPC> listNpcs() {
+		return npcMap.values();
 	}
 	
 	public static CitizensNPCRegistry getRegistry() {
