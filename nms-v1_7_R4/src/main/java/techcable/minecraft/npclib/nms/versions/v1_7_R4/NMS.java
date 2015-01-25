@@ -129,11 +129,19 @@ public class NMS implements techcable.minecraft.npclib.nms.NMS {
 	}
 
 	@Override
-	public void notifyOfSpawn(Player toNotify[], Player... players) {}
+	public void notifyOfSpawn(Player toNotify[], Player... players) {
+            if (ProtocolHack.isProtocolHack()) {
+                ProtocolHack.notifyOfSpawn(toNotify, players);
+            }
+        }
 
 	@Override
-	public void notifyOfDespawn(Player[] toNotify, Player... npcs) {}
-	
+	public void notifyOfDespawn(Player[] toNotify, Player... npcs) {
+            if (ProtocolHack.isProtocolHack()) {
+                ProtocolHack.notifyOfDespawn(toNotify, npcs);
+            }
+        }
+
 	@Override
 	public void notifyOfEquipmentChange(Player[] toNotify, Player rawNpc) {
 	    EntityPlayer npc = getHandle(rawNpc);
