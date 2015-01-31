@@ -3,7 +3,7 @@
   <groupId>techcable.minecraft</groupId>
   <artifactId>npclib-parent</artifactId>
   <name>NPC Lib</name>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.2</version>
   <packaging>pom</packaging>
   
   <repositories>
