@@ -56,7 +56,8 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
 	    if (!isSpawned()) return false;
 	    getEntity().remove();
 	    setEntity(null);
-	    update();
+	    run();
+	    cancel();
 	    getRegistry().deregister(this);
 	    return true;
 	}
@@ -120,6 +121,19 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
 	@Override
 	public boolean isProtected() {
 		return protect;
+	}
+	
+	private UUID skin;
+	
+	@Override
+	public void setSkin(UUID skin) {
+		if (!Util.getNMS().isSupported(OptionalFeature.SKINS)) throw new UnsupportedOperationException();
+		this.skin = skin;
+		if (isSpawned()) {
+			Location last = getEntity().getLocation();
+			getEntity().remove();
+			Util.spawn(last, EntityType.PLAYER, getName(), this);
+		}
 	}
 	
 	//Update logic

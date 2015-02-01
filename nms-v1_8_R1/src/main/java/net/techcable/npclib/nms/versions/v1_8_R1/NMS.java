@@ -18,6 +18,7 @@ import net.minecraft.server.v1_8_R1.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_8_R1.World;
 import net.minecraft.server.v1_8_R1.WorldServer;
 import net.techcable.npclib.NPC;
+import net.techcable.npclib.nms.OptionalFeature;
 import net.techcable.npclib.util.ReflectUtil;
 
 import com.mojang.authlib.GameProfile;
@@ -173,6 +174,16 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 			    if (packet == null) continue;
 			    recipient.playerConnection.sendPacket(packet);
 			}
+		}
+	}
+
+	@Override
+	public boolean isSupported(OptionalFeature feature) {
+		switch (feature) {
+		case SKINS :
+			return true;
+		default :
+			return false;
 		}
 	}
 }

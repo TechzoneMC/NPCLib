@@ -69,4 +69,24 @@ public interface NPC {
 	 * @return The protected status of the NPC
 	 */
 	public boolean isProtected();
+	
+	/**
+	 * Return this npc's skin
+	 * 
+	 * A value of null represents a steve skin
+	 * 
+	 * @return this npc's skin
+	 */
+	public UUID getSkin();
+	
+	/**
+	 * Set the npc's skin
+	 * 
+	 * A value f null represents a steve skin
+	 * 
+	 * @param skin the player with the skin you want
+	 * 
+	 * @throws UnsupportedOperationException if skins aren't supported
+	 */
+	public void setSkin(UUID skin);
 }

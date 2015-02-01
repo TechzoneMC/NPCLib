@@ -67,4 +67,20 @@ public class CitizensNPC implements net.techcable.npclib.NPC {
 	public boolean isProtected() {
 		return getBacking().isProtected();
 	}
+	
+	@Override
+	public void setSkin(UUID skin) {
+		if (skin == null) return;
+		getBacking().data().set(NPC.PLAYER_SKIN_UUID_METADATA, skin);
+		if (isSpawned()) {
+			despawn();
+			spawn(getBacking().getStoredLocation());
+		}
+	}
+	
+	@Override
+	public UUID getSkin() {
+		if (!getBacking().data().has(NPC.PLAYER_SKIN_UUID_METADATA)) return null;
+		return getBacking().data().get(NPC.PLAYER_SKIN_UUID_METADATA);
+	}
 }

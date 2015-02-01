@@ -18,6 +18,7 @@ import net.minecraft.server.v1_7_R4.World;
 import net.minecraft.server.v1_7_R4.WorldServer;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.techcable.npclib.NPC;
+import net.techcable.npclib.nms.OptionalFeature;
 import net.techcable.npclib.util.ReflectUtil;
 
 import org.bukkit.Bukkit;
@@ -166,6 +167,16 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 			    if (packet == null) continue;
 			    recipient.playerConnection.sendPacket(packet);
 			}
+		}
+	}
+
+	@Override
+	public boolean isSupported(OptionalFeature feature) {
+		switch (feature) {
+			case SKINS :
+				return true;
+			default :
+				return false;
 		}
 	}
 }
