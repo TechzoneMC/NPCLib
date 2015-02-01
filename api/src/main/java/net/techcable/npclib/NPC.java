@@ -69,9 +69,4 @@ public interface NPC {
 	 * @return The protected status of the NPC
 	 */
 	public boolean isProtected();
-	
-	/**
-	 * Call this method every tick to update the npc
-	 */
-	public void update();
 }

@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.plugin.Plugin;
 
 public interface NPCRegistry {
 	/**
@@ -59,4 +60,11 @@ public interface NPCRegistry {
 	 * @return all the npcs in the registry
 	 */
 	public Collection<? extends NPC> listNpcs();
+	
+	/**
+	 * Get this registry's owning plugin
+	 * 
+	 * @return the registry's plugin
+	 */
+	public Plugin getPlugin();
 }

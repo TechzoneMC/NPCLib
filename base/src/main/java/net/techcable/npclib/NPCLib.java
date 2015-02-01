@@ -8,6 +8,7 @@ import net.techcable.npclib.nms.NMSRegistry;
 import net.techcable.npclib.nms.Util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 public class NPCLib {
 	private NPCLib() {};
@@ -15,12 +16,12 @@ public class NPCLib {
 	private static NMSRegistry defaultNMS;
 	private static Map<String, NMSRegistry> registryMap = new HashMap<>();
 	
-	public static NPCRegistry getNPCRegistry() {
+	public static NPCRegistry getNPCRegistry(Plugin plugin) {
 	    if (hasCitizens()) {
-	        return CitizensNPCRegistry.getRegistry();
+	        return CitizensNPCRegistry.getRegistry(plugin);
 	    } else if (hasNMS()) {
 	        if (defaultNMS == null) {
-	        	defaultNMS = new NMSRegistry();
+	        	defaultNMS = new NMSRegistry(plugin);
 	        }
 	        return defaultNMS;
 	    } else {
@@ -28,12 +29,12 @@ public class NPCLib {
 	    }
 	}
 	
-	public static NPCRegistry getNPCRegistry(String name) {
+	public static NPCRegistry getNPCRegistry(String name, Plugin plugin) {
 	    if (hasCitizens()) {
-	        return CitizensNPCRegistry.getRegistry(name);
+	        return CitizensNPCRegistry.getRegistry(name, plugin);
 	    } else if (hasNMS()) {
 	        if (!registryMap.containsKey(name)) {
-	        	registryMap.put(name, new NMSRegistry());
+	        	registryMap.put(name, new NMSRegistry(plugin));
 	        }
 	        return registryMap.get(name);
 	    } else {

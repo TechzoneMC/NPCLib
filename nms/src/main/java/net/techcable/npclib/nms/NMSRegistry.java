@@ -16,6 +16,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Maps;
@@ -24,12 +25,13 @@ import com.google.common.collect.Sets;
 import lombok.*;
 
 @Getter
+@RequiredArgsConstructor
 public class NMSRegistry implements NPCRegistry {
 
 	private static final EntityType[] SUPPORTED_TYPES = new EntityType[] {EntityType.PLAYER};
-	
+	private final Plugin plugin;
 	private Map<UUID, NMSNPC> npcMap = new HashMap<>();
-	
+
 	@Override
 	public NPC createNPC(EntityType type, String name) {
 		return createNPC(type, UUID.randomUUID(), name);

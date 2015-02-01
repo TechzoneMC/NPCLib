@@ -9,6 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public interface NMS {
     public void look(Entity entity, float pitch, float yaw);
@@ -16,5 +17,5 @@ public interface NMS {
     public NPC getAsNPC(Entity entity);
     public void notifyOfSpawn(Player[] toNotify, Player... npcs); //Sends a PacketPlayOutPlayerInfo add-player on 1.8
     public void notifyOfDespawn(Player[] toNotify, Player... npcs); //Sends a PacketPlayOutPlayerInfo remove-player on 1.8
-    public void notifyOfEquipmentChange(Player[] toNotify, Player npc);
+    public void notifyOfEquipmentChange(Player[] toNotify, Player npc, int... slot);
 }

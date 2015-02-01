@@ -18,6 +18,7 @@ import net.techcable.npclib.NPC;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.plugin.Plugin;
 
 import com.google.common.collect.Sets;
 
@@ -29,6 +30,8 @@ public class CitizensNPCRegistry implements net.techcable.npclib.NPCRegistry {
 	@Getter
 	private final NPCRegistry backing;
 	private final Map<UUID, NPC> npcMap = new HashMap<>();
+	@Getter
+	private final Plugin plugin;
 	private IDTracker idTracker = new IDTracker();
 
 	public NPC convertNPC(net.citizensnpcs.api.npc.NPC citizensNpc) {
@@ -77,18 +80,18 @@ public class CitizensNPCRegistry implements net.techcable.npclib.NPCRegistry {
 		return npcMap.values();
 	}
 	
-	public static CitizensNPCRegistry getRegistry() {
+	public static CitizensNPCRegistry getRegistry(Plugin plugin) {
        	if (CitizensAPI.getNamedNPCRegistry("NPCLib") == null) {
 	        CitizensAPI.createNamedNPCRegistry("NPCLib", makeDataStore());
 	    }
-	    return new CitizensNPCRegistry(CitizensAPI.getNamedNPCRegistry("NPCLib"));
+	    return new CitizensNPCRegistry(CitizensAPI.getNamedNPCRegistry("NPCLib"), plugin);
 	}
 	
-	public static CitizensNPCRegistry getRegistry(String registryName) {
+	public static CitizensNPCRegistry getRegistry(String registryName, Plugin plugin) {
 	    if (CitizensAPI.getNamedNPCRegistry("NPCLib." + registryName) == null) {
 	        CitizensAPI.createNamedNPCRegistry("NPCLib." + registryName, makeDataStore());
 	    }
-	    return new CitizensNPCRegistry(CitizensAPI.getNamedNPCRegistry("NPCLib." + registryName));
+	    return new CitizensNPCRegistry(CitizensAPI.getNamedNPCRegistry("NPCLib." + registryName), plugin);
 	}
 	
 	private static NPCDataStore makeDataStore() {

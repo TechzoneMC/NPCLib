@@ -1,31 +1,49 @@
 package net.techcable.npclib.nms;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
 import java.util.UUID;
 
 import net.techcable.npclib.NPC;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 import lombok.*;
 
 @Getter
 @Setter
-public class NMSNPC implements NPC {
+public class NMSNPC extends BukkitRunnable implements NPC, Listener {
 	
     public NMSNPC(UUID uuid, EntityType type, NMSRegistry registry) {
         if (!type.equals(EntityType.PLAYER)) throw new UnsupportedOperationException("Can only spawn players");
         this.type = type;
         this.UUID = uuid;
-        this.registry = registry;    
+        this.registry = registry; 
+        runTaskTimer(getRegistry().getPlugin(), 20, 1);
     }
     
-    @Setter(AccessLevel.NONE) //We have our own getters and setters
-    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE) 
     private boolean protect;
     private final NMSRegistry registry;
     private Entity entity;
@@ -89,7 +107,7 @@ public class NMSNPC implements NPC {
 	    Entity spawned = Util.spawn(toSpawn, getType(), getName(), this);
 	    if (spawned != null) {
 	        setEntity(spawned);
-	        update();
+	        update(Bukkit.getOnlinePlayers());
 	        return true;
 	    } else return false;
 	}
@@ -103,15 +121,65 @@ public class NMSNPC implements NPC {
 	public boolean isProtected() {
 		return protect;
 	}
-
-	@Override
-	public void update() {
-		update(Util.getNearbyPlayers(128, getEntity().getLocation()));
+	
+	//Update logic
+	
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		update(event.getPlayer());
 	}
 
 	public void update(Player... players) {
 		if (isSpawned()) Util.getNMS().notifyOfSpawn(players, (Player)getEntity());
 		else Util.getNMS().notifyOfDespawn(players, (Player)getEntity());
-		Util.getNMS().notifyOfEquipmentChange(players, (Player)getEntity());
+		tryEquipmentChangeNotify(players);
+	}
+	
+	@Override
+	public void run() {
+		tryEquipmentChangeNotify(Util.getNearbyPlayers(getRange(), getEntity().getLocation()));
+	}
+	
+	private ItemStack[] lastArmor = new ItemStack[5];
+	public void tryEquipmentChangeNotify(Player[] toNotify) {
+		synchronized (lastArmor) {
+			ArrayList<Integer> toUpdate = new ArrayList<>(5);
+			for (int i = 0; i < 5; i++) {
+				ItemStack lastArmor = this.lastArmor[i];
+				ItemStack currentArmor = getEquipment(i);
+				if (!equals(currentArmor, lastArmor)) toUpdate.add(i);
+			}
+			if (toUpdate.size() != 0) Util.getNMS().notifyOfEquipmentChange(toNotify, (Player)this.getEntity(), ArrayUtils.toPrimitive(((Integer[])toUpdate.toArray())));
+		}
+	}
+	
+	public static int getRange() {
+		return (Bukkit.getViewDistance() * 16) + 24;
+	}
+	
+	public ItemStack getEquipment(int slot) {
+		switch (slot) {
+		case 0 :
+			return getEquipment().getItemInHand();
+		case 1 :
+			return getEquipment().getHelmet();
+		case 2 :
+			return getEquipment().getChestplate();
+		case 3 :
+			return getEquipment().getLeggings();
+		case 4 :
+			return getEquipment().getBoots();
+		default :
+			return null;
+		}
+	}
+	
+	public EntityEquipment getEquipment() {
+		return ((LivingEntity)getEntity()).getEquipment();
+	}
+	
+	public static boolean equals(ItemStack first, ItemStack second) {
+		if (first == null) return second == null;
+		return first.equals(second);
 	}
 }

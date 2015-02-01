@@ -1,6 +1,8 @@
 package net.techcable.npclib.nms.versions.v1_7_R4;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.server.v1_7_R4.ChunkCoordinates;
@@ -141,14 +143,16 @@ public class NMS implements net.techcable.npclib.nms.NMS {
             }
         }
 
+	public static final int[] UPDATE_ALL_SLOTS = new int[] {0, 1, 2, 3, 4};
 	@Override
-	public void notifyOfEquipmentChange(Player[] toNotify, Player rawNpc) {
+	public void notifyOfEquipmentChange(Player[] toNotify, Player rawNpc, int... slots) {
 	    EntityPlayer npc = getHandle(rawNpc);
-	    Packet[] packets = new Packet[5];
-	    for (int i = 0; i < 5; i++) {
-	        packets[i] = new PacketPlayOutEntityEquipment(npc.getId(), i, npc.getEquipment(i));
+	    slots = slots.length == 0 ? UPDATE_ALL_SLOTS : slots;
+	    List<Packet> packets = new ArrayList<>();
+	    for (int slot : slots) {
+	        packets.add(new PacketPlayOutEntityEquipment(npc.getId(), slot, npc.getEquipment(slot)));
 	    }
-	    sendPacketsTo(toNotify, packets);
+	    sendPacketsTo(toNotify, (Packet[])packets.toArray());
 	}
 	
 	public void sendPacketsTo(Player[] recipients, Packet... packets) {

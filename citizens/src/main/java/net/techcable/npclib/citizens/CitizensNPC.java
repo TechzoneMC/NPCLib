@@ -67,7 +67,4 @@ public class CitizensNPC implements net.techcable.npclib.NPC {
 	public boolean isProtected() {
 		return getBacking().isProtected();
 	}
-
-	@Override
-	public void update() {}
 }
