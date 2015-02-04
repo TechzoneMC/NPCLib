@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import net.techcable.npclib.NPC;
+import net.techcable.npclib.util.ProfileUtils;
+import net.techcable.npclib.util.ProfileUtils.PlayerProfile;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
@@ -136,10 +138,19 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
 		}
 	}
 	
+	@Override
+	public void setSkin(String skin) {
+	    if (skin == null) return;
+	    PlayerProfile profile = ProfileUtils.lookup(skin);
+	    if (profile == null) return;
+	    setSkin(profile.getId());
+	}
+	
 	//Update logic
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
+	    if (!isSpawned()) return;
 		update(event.getPlayer());
 	}
 

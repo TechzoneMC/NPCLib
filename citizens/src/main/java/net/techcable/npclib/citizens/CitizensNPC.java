@@ -7,6 +7,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.techcable.npclib.util.ProfileUtils;
+import net.techcable.npclib.util.ProfileUtils.PlayerProfile;
 
 import lombok.*;
 
@@ -76,6 +78,14 @@ public class CitizensNPC implements net.techcable.npclib.NPC {
 			despawn();
 			spawn(getBacking().getStoredLocation());
 		}
+	}
+	
+	@Override
+	public void setSkin(String skin) {
+	    if (skin == null) return;
+	    PlayerProfile profile = ProfileUtils.lookup(skin);
+	    if (profile == null) return;
+	    setSkin(profile.getId());
 	}
 	
 	@Override

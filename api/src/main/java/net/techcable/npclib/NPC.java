@@ -82,11 +82,22 @@ public interface NPC {
 	/**
 	 * Set the npc's skin
 	 * 
-	 * A value f null represents a steve skin
+	 * A value of null represents a steve skin
 	 * 
-	 * @param skin the player with the skin you want
+	 * @param skin the player id with the skin you want
 	 * 
 	 * @throws UnsupportedOperationException if skins aren't supported
 	 */
 	public void setSkin(UUID skin);
+	
+	/**
+	 * Set the npc's skin
+	 * 
+	 * A value f null represents a steve skin
+	 * 
+	 * @param skin the player name with the skin you want
+	 * 
+	 * @throws UnsupportedOperationException if skins aren't supported
+	 */
+	public void setSkin(String skin);
 }
