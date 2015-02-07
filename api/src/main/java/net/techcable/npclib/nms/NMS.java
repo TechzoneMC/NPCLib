@@ -14,6 +14,6 @@ import org.bukkit.inventory.ItemStack;
 
 public interface NMS {
 	public boolean isSupported(OptionalFeature feature);
-    public EntityHumanNPC createPlayer(HumanNPC npc);
+    public EntityHumanNPC createPlayer(HumanNPC npc, Location initialLocation);
     public EntityNPC getAsNPC(Entity entity);
 }

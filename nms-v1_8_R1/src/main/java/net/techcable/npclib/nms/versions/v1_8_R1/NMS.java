@@ -54,29 +54,6 @@ public class NMS implements net.techcable.npclib.nms.NMS {
         handle.pitch = pitch;
     }
     
-    /**
-     * This is copied from citizens
-     * I added comments giving mcp mappings
-     * @param entity
-     * @param yaw the
-     */
-    public static void setHeadYaw(Entity entity, float yaw) {
-        if (!(entity instanceof EntityLiving))
-            return;
-        EntityLiving handle = (EntityLiving) entity;
-        while (yaw < -180.0F) {
-            yaw += 360.0F;
-        }
-
-        while (yaw >= 180.0F) {
-            yaw -= 360.0F;
-        }
-        handle.aI = yaw; //MCP = roatationYawHead ---- SRG=field_70759_as
-        if (!(handle instanceof EntityHuman))
-            handle.aG = yaw; //MCP = renderYawOffset ---- SRG=field_70761_aq
-        handle.aJ = yaw; //MCP = prevRotationYawHead ---- SRG=field_70758_at
-    }
-    
     @Override
     public Player spawnPlayer(Location toSpawn, String name, NPC npc) {
     	EntityNPCPlayer player = new EntityNPCPlayer(npc, name, toSpawn);
@@ -164,17 +141,6 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 	        packets.add(new PacketPlayOutEntityEquipment(npc.getId(), slot, npc.getEquipment(slot)));
 	    }
 	    sendPacketsTo(toNotify, (Packet[])packets.toArray());
-	}
-	
-	public void sendPacketsTo(Player[] recipients, Packet... packets) {
-	    EntityPlayer[] nmsRecipients = getHandles(recipients);
-		for (EntityPlayer recipient : nmsRecipients) {
-			if (recipient == null) continue;
-			for (Packet packet : packets) {
-			    if (packet == null) continue;
-			    recipient.playerConnection.sendPacket(packet);
-			}
-		}
 	}
 
 	@Override

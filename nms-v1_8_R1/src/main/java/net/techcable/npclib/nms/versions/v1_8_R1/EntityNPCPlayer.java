@@ -31,14 +31,6 @@ public class EntityNPCPlayer extends EntityPlayer {
 		setPosition(location.getX(), location.getY(), location.getZ());
 	}
 	
-	@Override
-	public boolean damageEntity(DamageSource source, float damage) {
-		if (npc.isProtected()) {
-			return false;
-		}
-		return super.damageEntity(source, damage);
-	}
-	
 	public static GameProfile makeProfile(String name, UUID skinId) {
 		GameProfile profile = new GameProfile(UUID.randomUUID(), name);
 		if (skinId != null) {
