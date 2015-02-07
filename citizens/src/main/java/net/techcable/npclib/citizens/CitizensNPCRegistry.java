@@ -14,6 +14,7 @@ import net.citizensnpcs.api.npc.SimpleNPCDataStore;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Storage;
+import net.techcable.npclib.HumanNPC;
 import net.techcable.npclib.NPC;
 
 import org.bukkit.entity.Entity;
@@ -41,13 +42,14 @@ public class CitizensNPCRegistry implements net.techcable.npclib.NPCRegistry {
 		return ((CitizensNPC)techcableNpc).getBacking();
 	}
 	
-	public NPC createNPC(EntityType type, String name) {
-		return createNPC(type, UUID.randomUUID(), name);
+	@Override
+	public NPC createNPC(EntityType type) {
+		return createNPC(type, UUID.randomUUID());
 	}
 
-	public NPC createNPC(EntityType type, UUID uuid, String name) {
-		if (getByUUID(uuid) != null) throw new IllegalArgumentException("uuid is already in use");
-		net.citizensnpcs.api.npc.NPC npc = getBacking().createNPC(type, uuid, idTracker.getNextId(), name);
+	public NPC createNPC(EntityType type, UUID uuid) {
+		if (getByUUID(uuid) != null) return getByUUID(uuid);
+		net.citizensnpcs.api.npc.NPC npc = getBacking().createNPC(type, uuid, idTracker.getNextId(), "");
 		NPC techcableNpc = CitizensNPC.createNPC(npc, this);
 		npcMap.put(npc.getUniqueId(), techcableNpc);
 		return techcableNpc;
@@ -55,7 +57,9 @@ public class CitizensNPCRegistry implements net.techcable.npclib.NPCRegistry {
 
 	public void deregister(NPC npc) {
 		if (npc.isSpawned()) throw new IllegalStateException("Npc is spawned");
+		convertNPC(npc).destroy();
 		getBacking().deregister(convertNPC(npc));
+		idTracker.removeId(convertNPC(npc).getId());
 		npcMap.remove(npc.getUUID());
 	}
 
@@ -150,5 +154,14 @@ public class CitizensNPCRegistry implements net.techcable.npclib.NPCRegistry {
 		public boolean isUsed(int id) {
 			return usedIds.contains(id);
 		}
+	}
+
+	@Override
+	public HumanNPC createHumanNPC() {
+		return (HumanNPC) createNPC(EntityType.PLAYER);
+	}
+	@Override
+	public HumanNPC createHumanNPC(UUID uuid) {
+		return (HumanNPC) createNPC(EntityType.PLAYER, uuid);
 	}
 }

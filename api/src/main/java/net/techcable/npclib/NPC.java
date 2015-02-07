@@ -11,9 +11,6 @@ public interface NPC {
 	/**
 	 * Despawn this npc
 	 * 
-	 * Once despawned it can not be respawned
-	 * It will be deregistered from the registry
-	 * 
 	 * @return true if was able to despawn
 	 */
 	public boolean despawn();
@@ -69,35 +66,4 @@ public interface NPC {
 	 * @return The protected status of the NPC
 	 */
 	public boolean isProtected();
-	
-	/**
-	 * Return this npc's skin
-	 * 
-	 * A value of null represents a steve skin
-	 * 
-	 * @return this npc's skin
-	 */
-	public UUID getSkin();
-	
-	/**
-	 * Set the npc's skin
-	 * 
-	 * A value of null represents a steve skin
-	 * 
-	 * @param skin the player id with the skin you want
-	 * 
-	 * @throws UnsupportedOperationException if skins aren't supported
-	 */
-	public void setSkin(UUID skin);
-	
-	/**
-	 * Set the npc's skin
-	 * 
-	 * A value f null represents a steve skin
-	 * 
-	 * @param skin the player name with the skin you want
-	 * 
-	 * @throws UnsupportedOperationException if skins aren't supported
-	 */
-	public void setSkin(String skin);
 }

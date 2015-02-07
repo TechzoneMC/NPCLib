@@ -9,6 +9,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import net.techcable.npclib.HumanNPC;
 import net.techcable.npclib.NPC;
 import net.techcable.npclib.NPCRegistry;
 
@@ -33,16 +34,15 @@ public class NMSRegistry implements NPCRegistry {
 	private Map<UUID, NMSNPC> npcMap = new HashMap<>();
 
 	@Override
-	public NPC createNPC(EntityType type, String name) {
-		return createNPC(type, UUID.randomUUID(), name);
+	public NPC createNPC(EntityType type) {
+		return createNPC(type, UUID.randomUUID());
 	}
 
 	@Override
-	public NPC createNPC(EntityType type, UUID uuid, String name) {
+	public NPC createNPC(EntityType type, UUID uuid) {
 		if (!ArrayUtils.contains(SUPPORTED_TYPES, type)) throw new UnsupportedOperationException(type.toString() + " is an Unsupported Entity Type");
-		if (npcMap.containsKey(uuid)) throw new IllegalArgumentException("NPC with UUID " + uuid.toString() + " is already created");
+		if (npcMap.containsKey(uuid)) return getByUUID(uuid);
 		NMSNPC npc = new NMSNPC(uuid, type, this);
-		npc.setName(name);
 		npcMap.put(uuid, npc);
 		return npc;
 	}
@@ -73,7 +73,7 @@ public class NMSRegistry implements NPCRegistry {
 	@Override
 	public NPC getAsNPC(Entity entity) {
 		if (!isNPC(entity)) throw new IllegalStateException("Not an NPC");
-		return Util.getNMS().getAsNPC(entity);
+		return Util.getNMS().getAsNPC(entity).getNpc();
 	}
 
 	@Override
@@ -84,6 +84,16 @@ public class NMSRegistry implements NPCRegistry {
 	@Override
 	public Collection<? extends NPC> listNpcs() {
 		return Collections.unmodifiableCollection(getNpcMap().values());
+	}
+
+	@Override
+	public HumanNPC createHumanNPC() {
+		return createHumanNPC(UUID.randomUUID());
+	}
+
+	@Override
+	public HumanNPC createHumanNPC(UUID uuid) {
+		return (HumanNPC) createNPC(EntityType.PLAYER, uuid);
 	}
 
 }

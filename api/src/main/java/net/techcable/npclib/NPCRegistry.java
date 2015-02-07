@@ -9,21 +9,45 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
 
 public interface NPCRegistry {
+	
+	/**
+	 * Creates a despawned human npc
+	 * 
+	 * If the npc already exists the old version is returned
+	 * 
+	 * @return the new human npc
+	 */
+	public HumanNPC createHumanNPC();
+
+	/**
+	 * Creates a despawned human npc
+	 * 
+	 * If the npc already exists the old version is returned
+	 * 
+	 * @param uuid the uuid of the new npc
+	 * @return the new human npc
+	 */
+	public HumanNPC createHumanNPC(UUID uuid);
+	
 	/**
 	 * Creates a despawned npc
+	 * 
+	 * If the npc already exists the old version is returned
+	 * 
 	 * @param type {@link EntityType} of the NPC
-	 * @param name the name of the npc
 	 * @return the new npc
 	 */
-	public NPC createNPC(EntityType type, String name);
+	public NPC createNPC(EntityType type);
 	/**
 	 * Creates a despawned npc
+	 * 
+	 * If the npc already exists the old version is returned
+	 * 
 	 * @param type {@link EntityType} of the NPC
 	 * @param uuid the uuid of the new npc
-	 * @param name the name of the npc
 	 * @return the new npc
 	 */
-	public NPC createNPC(EntityType type, UUID uuid, String name);
+	public NPC createNPC(EntityType type, UUID uuid);
 	/**
 	 * Removes this npc from the registry
 	 * Be careful not to remove despawned npcs

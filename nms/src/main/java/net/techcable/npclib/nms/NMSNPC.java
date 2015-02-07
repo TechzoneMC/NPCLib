@@ -22,6 +22,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -48,19 +51,20 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
     @Getter(AccessLevel.NONE) 
     private boolean protect;
     private final NMSRegistry registry;
-    private Entity entity;
+    private EntityNPC npc;
     private final UUID UUID;
     private final EntityType type;
     private String name = "";
+    
+    public Entity getEntity() {
+    	return getNpc().getEntity();
+    }
     
     @Override
 	public boolean despawn() {
 	    if (!isSpawned()) return false;
 	    getEntity().remove();
-	    setEntity(null);
-	    run();
-	    cancel();
-	    getRegistry().deregister(this);
+	    setNpc(null);
 	    return true;
 	}
     
@@ -86,7 +90,7 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
     
     @Override
 	public boolean isSpawned() {
-	    return entity != null;
+	    return npc != null;
 	}
 
 	@Override
@@ -107,12 +111,7 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
 	@Override
 	public boolean spawn(Location toSpawn) {
 	    if (isSpawned()) return false;
-	    Entity spawned = Util.spawn(toSpawn, getType(), getName(), this);
-	    if (spawned != null) {
-	        setEntity(spawned);
-	        update(Bukkit.getOnlinePlayers());
-	        return true;
-	    } else return false;
+	    throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -125,44 +124,26 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
 		return protect;
 	}
 	
-	private UUID skin;
-	
-	@Override
-	public void setSkin(UUID skin) {
-		if (!Util.getNMS().isSupported(OptionalFeature.SKINS)) throw new UnsupportedOperationException();
-		this.skin = skin;
-		if (isSpawned()) {
-			Location last = getEntity().getLocation();
-			getEntity().remove();
-			Util.spawn(last, EntityType.PLAYER, getName(), this);
-		}
-	}
-	
-	@Override
-	public void setSkin(String skin) {
-	    if (skin == null) return;
-	    PlayerProfile profile = ProfileUtils.lookup(skin);
-	    if (profile == null) return;
-	    setSkin(profile.getId());
-	}
-	
-	//Update logic
-	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 	    if (!isSpawned()) return;
-		update(event.getPlayer());
-	}
-
-	public void update(Player... players) {
-		if (isSpawned()) Util.getNMS().notifyOfSpawn(players, (Player)getEntity());
-		else Util.getNMS().notifyOfDespawn(players, (Player)getEntity());
-		tryEquipmentChangeNotify(players);
+		getNpc().onJoin(event.getPlayer());
 	}
 	
+	@EventHandler
+	public void onDamage(EntityDamageByEntityEvent event) {
+		getNpc().onDamage(event.getEntity(), event.getDamager());
+	}
+	
+	@EventHandler
+	public void onDamage(EntityDamageByBlockEvent event) {
+		getNpc().onDamage(event.getEntity(), event.getDamager());
+	}
+ 	
 	@Override
 	public void run() {
-		tryEquipmentChangeNotify(Util.getNearbyPlayers(getRange(), getEntity().getLocation()));
+		if (isSpawned()) tryEquipmentChangeNotify(Util.getNearbyPlayers(getRange(), getEntity().getLocation()));
+		getNpc().onTick();
 	}
 	
 	private ItemStack[] lastArmor = new ItemStack[5];
@@ -174,7 +155,7 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
 				ItemStack currentArmor = getEquipment(i);
 				if (!equals(currentArmor, lastArmor)) toUpdate.add(i);
 			}
-			if (toUpdate.size() != 0) Util.getNMS().notifyOfEquipmentChange(toNotify, (Player)this.getEntity(), ArrayUtils.toPrimitive(((Integer[])toUpdate.toArray())));
+			if (toUpdate.size() != 0) getNpc().notifyOfEquipmentChange(toNotify, ArrayUtils.toPrimitive(((Integer[])toUpdate.toArray())));
 		}
 	}
 	

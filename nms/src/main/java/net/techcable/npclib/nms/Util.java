@@ -65,13 +65,7 @@ public class Util {
         if (zDiff < 0.0)
             yaw += Math.abs(180 - yaw) * 2;
 
-        getNMS().look(entity, (float) yaw - 90, (float) pitch);
-    }
-   
-    public static Entity spawn(Location location, EntityType type, String name, NPC npc) {
-        if (type.equals(EntityType.PLAYER)) {
-            return getNMS().spawnPlayer(location, name, npc);
-        } else throw new UnsupportedOperationException();
+        getNMS().getAsNPC(entity).look(pitch, yaw);
     }
     
     public static Player[] getNearbyPlayers(int range, Location l) {

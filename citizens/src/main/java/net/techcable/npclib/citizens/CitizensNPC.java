@@ -22,7 +22,11 @@ public class CitizensNPC implements net.techcable.npclib.NPC {
     }
 
     public static CitizensNPC createNPC(NPC backing, CitizensNPCRegistry registry) {
-    	return new CitizensNPC(backing.getUniqueId(), registry);
+    	if (backing.getEntity() instanceof Player) {
+    		return new CitizensHumanNPC(backing.getUniqueId(), registry);
+    	} else {
+    		return new CitizensNPC(backing.getUniqueId(), registry);
+    	}
     }
     
     //Implementation
@@ -68,29 +72,5 @@ public class CitizensNPC implements net.techcable.npclib.NPC {
 	@Override
 	public boolean isProtected() {
 		return getBacking().isProtected();
-	}
-	
-	@Override
-	public void setSkin(UUID skin) {
-		if (skin == null) return;
-		getBacking().data().set(NPC.PLAYER_SKIN_UUID_METADATA, skin);
-		if (isSpawned()) {
-			despawn();
-			spawn(getBacking().getStoredLocation());
-		}
-	}
-	
-	@Override
-	public void setSkin(String skin) {
-	    if (skin == null) return;
-	    PlayerProfile profile = ProfileUtils.lookup(skin);
-	    if (profile == null) return;
-	    setSkin(profile.getId());
-	}
-	
-	@Override
-	public UUID getSkin() {
-		if (!getBacking().data().has(NPC.PLAYER_SKIN_UUID_METADATA)) return null;
-		return getBacking().data().get(NPC.PLAYER_SKIN_UUID_METADATA);
 	}
 }
