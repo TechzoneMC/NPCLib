@@ -55,10 +55,11 @@ public class NMS implements net.techcable.npclib.nms.NMS {
     }
     
     @Override
-    public Player spawnPlayer(Location toSpawn, String name, NPC npc) {
-    	EntityNPCPlayer player = new EntityNPCPlayer(npc, name, toSpawn);
+    public EntityHumanNPC spawnPlayer(HumanNPC npc, Location toSpawn) {
+    	EntityPlayerNPC player = new EntityPlayerNPC(npc, toSpawn);
     	WorldServer world = getHandle(toSpawn.getWorld());
     	world.addEntity(player);
+    	player.sendPacketsTo(Bukkit.getOnlinePlayers(), new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, this));
     	look(player.getBukkitEntity(), toSpawn.getPitch(), toSpawn.getYaw());
     	return player.getBukkitEntity();
     }
@@ -108,27 +109,13 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 	}
 
 	@Override
-	public NPC getAsNPC(org.bukkit.entity.Entity entity) {
-		if (getHandle(entity) instanceof EntityNPCPlayer) {
-			EntityNPCPlayer player = (EntityNPCPlayer) getHandle(entity);
+	public NPC getAsNpc(org.bukkit.entity.Entity entity) {
+		if (getHandle(entity) instanceof EntityPlayerNPC) {
+			EntityPlayerNPC player = (EntityPlayerNPC) getHandle(entity);
 			return player.getNpc();
 		} else {
 			return null;
 		}
-	}
-
-	@Override
-	public void notifyOfSpawn(Player[] toNotify, Player... npcs) {
-		EntityPlayer[] nmsNpcs = getHandles(npcs);
-		PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, nmsNpcs);
-		sendPacketsTo(toNotify, packet);
-	}
-
-	@Override
-	public void notifyOfDespawn(Player[] toNotify, Player... npcs) {
-		EntityPlayer[] nmsNpcs = getHandles(npcs);
-		PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, nmsNpcs);
-		sendPacketsTo(toNotify, packet);
 	}
 	
 	public static final int[] UPDATE_ALL_SLOTS = new int[] {0, 1, 2, 3, 4};

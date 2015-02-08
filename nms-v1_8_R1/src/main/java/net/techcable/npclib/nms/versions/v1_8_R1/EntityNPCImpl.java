@@ -30,45 +30,30 @@ public class EntityNPCImpl extends EntityLiving implements EntityNPC {
 		this.npc = npc;
 	}
 	
-	public static final int[] u
+	public static final int[] UPDATE_ALL = new int[] {0, 1, 2, 3, 4};
 	@Override
 	public void notifyOfEquipmentChange(Player[] toNotify, int... slots) {
-	    slots = slots.length == 0 ? new in : slots;
+	    slots = slots.length == 0 ? UPDATE_ALL : slots;
 	    List<Packet> packets = new ArrayList<>();
 	    for (int slot : slots) {
 	        packets.add(new PacketPlayOutEntityEquipment(npc.getId(), slot, npc.getEquipment(slot)));
 	    }
 	    sendPacketsTo(toNotify, (Packet[])packets.toArray());
 	}
-
-	@Override
-	public void spawn(Location toSpawn) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void despawn() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public EntityType getType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
+	
 	public Entity getEntity() {
-		return getBukkitEntity();
+	    return getBukkitEntity();
+	}
+	public void look(double pitch, double yaw) {
+	    this.pitch = pitch;
+	    this.yaw = yaw;
+	    setHeadYaw(yaw);
 	}
 
-	@Override
-	public void look(double pitch, double yaw) {
-		this.pitch = (float) pitch;
-		this.yaw = (float) yaw;
-	}
+	//Event Hooks
+	public void onDespawn() {}
+	public void onJoin(Player joined) {}
+	public void onTick() {}
 	
 	//Overrides
 	
@@ -80,28 +65,6 @@ public class EntityNPCImpl extends EntityLiving implements EntityNPC {
 		return super.damageEntity(source, damage);
 	}
 	
-	
-	//Event Handlers
-
-
-	@Override
-	public void onJoin(Player joined) {}
-	
-	@Override
-	public void onDamage(Entity damaged, Entity damager) {
-		if (damaged.getEntityId() == getId()) onDamage();
-	}
-
-	@Override
-	public void onDamage(Entity damaged, Block damager) {
-		if (damaged.getEntityId() == getId()) onDamage();
-	}
-
-	public void onDamage() {}
-	
-	@Override
-	public void onTick() {}
-	
 	//Utils
 	public void sendPacketsTo(Player[] recipients, Packet... packets) {
 	    EntityPlayer[] nmsRecipients = NMS.getHandles(recipients);
@@ -112,6 +75,10 @@ public class EntityNPCImpl extends EntityLiving implements EntityNPC {
 			    recipient.playerConnection.sendPacket(packet);
 			}
 		}
+	}
+	
+	public void sendPacketsTo(Player recipient, Packet... packets) {
+	    sendPacketsTo(new Player[] {recipient}, packets);
 	}
 	
     /**

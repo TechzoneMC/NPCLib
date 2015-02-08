@@ -63,6 +63,7 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
     @Override
 	public boolean despawn() {
 	    if (!isSpawned()) return false;
+	    getNpc().onDespawn();
 	    getEntity().remove();
 	    setNpc(null);
 	    return true;
@@ -128,16 +129,6 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
 	public void onJoin(PlayerJoinEvent event) {
 	    if (!isSpawned()) return;
 		getNpc().onJoin(event.getPlayer());
-	}
-	
-	@EventHandler
-	public void onDamage(EntityDamageByEntityEvent event) {
-		getNpc().onDamage(event.getEntity(), event.getDamager());
-	}
-	
-	@EventHandler
-	public void onDamage(EntityDamageByBlockEvent event) {
-		getNpc().onDamage(event.getEntity(), event.getDamager());
 	}
  	
 	@Override

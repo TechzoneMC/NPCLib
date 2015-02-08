@@ -82,13 +82,7 @@ public class NMSHumanNPC extends NMSNPC implements HumanNPC {
 	@Override
 	public boolean spawn(Location toSpawn) {
 		if (isSpawned()) throw new IllegalStateException("Already spawned");
-		EntityHumanNPC npc = Util.getNMS().createPlayer(this);
+		EntityHumanNPC npc = Util.getNMS().spawnPlayer(this, toSpawn);
 		setNpc(npc);
-		try {
-			npc.spawn(toSpawn);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
 	}
 }
