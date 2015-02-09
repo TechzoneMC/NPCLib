@@ -18,6 +18,9 @@ import net.minecraft.server.v1_8_R1.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_8_R1.World;
 import net.minecraft.server.v1_8_R1.WorldServer;
 import net.techcable.npclib.NPC;
+import net.techcable.npclib.HumanNPC;
+import net.techcable.npclib.nms.EntityNPC;
+import net.techcable.npclib.nms.EntityHumanNPC;
 import net.techcable.npclib.nms.OptionalFeature;
 import net.techcable.npclib.util.ReflectUtil;
 
@@ -45,23 +48,14 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 	public static NMS getInstance() {
 		return instance;
 	}
-	
-    public void look(org.bukkit.entity.Entity entity, float pitch, float yaw) {
-        Entity handle = getHandle(entity);
-        if (handle == null) return;
-        handle.yaw = yaw;
-        setHeadYaw(getHandle(entity), yaw);
-        handle.pitch = pitch;
-    }
     
     @Override
     public EntityHumanNPC spawnPlayer(HumanNPC npc, Location toSpawn) {
     	EntityPlayerNPC player = new EntityPlayerNPC(npc, toSpawn);
     	WorldServer world = getHandle(toSpawn.getWorld());
     	world.addEntity(player);
-    	player.sendPacketsTo(Bukkit.getOnlinePlayers(), new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, this));
-    	look(player.getBukkitEntity(), toSpawn.getPitch(), toSpawn.getYaw());
-    	return player.getBukkitEntity();
+    	player.sendPacketsTo(Bukkit.getOnlinePlayers(), new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, player));
+    	return player;
     }
     
     public static Entity getHandle(org.bukkit.entity.Entity bukkitEntity) {
@@ -109,27 +103,14 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 	}
 
 	@Override
-	public NPC getAsNpc(org.bukkit.entity.Entity entity) {
+	public EntityNPC getAsNPC(org.bukkit.entity.Entity entity) {
 		if (getHandle(entity) instanceof EntityPlayerNPC) {
-			EntityPlayerNPC player = (EntityPlayerNPC) getHandle(entity);
-			return player.getNpc();
+			return (EntityPlayerNPC) getHandle(entity);
 		} else {
 			return null;
 		}
 	}
 	
-	public static final int[] UPDATE_ALL_SLOTS = new int[] {0, 1, 2, 3, 4};
-	@Override
-	public void notifyOfEquipmentChange(Player[] toNotify, Player rawNpc, int... slots) {
-	    EntityPlayer npc = getHandle(rawNpc);
-	    slots = slots.length == 0 ? UPDATE_ALL_SLOTS : slots;
-	    List<Packet> packets = new ArrayList<>();
-	    for (int slot : slots) {
-	        packets.add(new PacketPlayOutEntityEquipment(npc.getId(), slot, npc.getEquipment(slot)));
-	    }
-	    sendPacketsTo(toNotify, (Packet[])packets.toArray());
-	}
-
 	@Override
 	public boolean isSupported(OptionalFeature feature) {
 		switch (feature) {
