@@ -155,13 +155,15 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
 	}
 
 	public void update(Player... players) {
-		if (isSpawned()) Util.getNMS().notifyOfSpawn(players, (Player)getEntity());
-		else Util.getNMS().notifyOfDespawn(players, (Player)getEntity());
-		tryEquipmentChangeNotify(players);
+		if (isSpawned()) {
+     Util.getNMS().notifyOfSpawn(players, (Player)getEntity());
+     tryEquipmentChangeNotify(players);
+  } else Util.getNMS().notifyOfDespawn(players, (Player)getEntity());
 	}
 	
 	@Override
 	public void run() {
+   if (!isSpawned()) return;
 		tryEquipmentChangeNotify(Util.getNearbyPlayers(getRange(), getEntity().getLocation()));
 	}
 	
