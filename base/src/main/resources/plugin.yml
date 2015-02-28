@@ -1,0 +1,6 @@
+name: NPCLib
+version: 1.0.0-SNAPSHOT
+authors:
+  - Techcable
+softdepend: [Citizens]
+main: net.techcable.npclib.Plugin
