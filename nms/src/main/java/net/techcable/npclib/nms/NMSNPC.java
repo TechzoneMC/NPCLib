@@ -176,7 +176,7 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
 				ItemStack currentArmor = getEquipment(i);
 				if (!equals(currentArmor, lastArmor)) toUpdate.add(i);
 			}
-			if (toUpdate.size() != 0) Util.getNMS().notifyOfEquipmentChange(toNotify, (Player)this.getEntity(), ArrayUtils.toPrimitive(((Integer[])toUpdate.toArray())));
+			if (toUpdate.size() != 0) Util.getNMS().notifyOfEquipmentChange(toNotify, (Player)this.getEntity(), ArrayUtils.toPrimitive(toUpdate.toArray(new Integer[toUpdate.size()])));
 		}
 	}
 	
