@@ -1,5 +1,6 @@
 target/
 pom.xml.tag
+dependency-reduced-pom.xml
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 pom.xml.next
