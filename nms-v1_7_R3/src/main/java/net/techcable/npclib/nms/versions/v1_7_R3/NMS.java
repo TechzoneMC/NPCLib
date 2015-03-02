@@ -145,7 +145,7 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 	    for (int slot : slots) {
 	        packets.add(new PacketPlayOutEntityEquipment(npc.getId(), slot, npc.getEquipment(slot)));
 	    }
-	    sendPacketsTo(toNotify, (Packet[])packets.toArray());
+	    sendPacketsTo(toNotify, packets.toArray(new Packet[packets.size()]));
 	}
 	
 	public void sendPacketsTo(Player[] recipients, Packet... packets) {
