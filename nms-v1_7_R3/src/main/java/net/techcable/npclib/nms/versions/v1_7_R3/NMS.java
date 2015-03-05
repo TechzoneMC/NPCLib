@@ -2,6 +2,7 @@ package net.techcable.npclib.nms.versions.v1_7_R3;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -128,13 +129,7 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 			return null;
 		}
 	}
-
-	@Override
-	public void notifyOfSpawn(Player[] toNotify, Player... players) {}
-
-	@Override
-	public void notifyOfDespawn(Player[] toNotify, Player... npcs) {}
-
+	
 	public static final int[] UPDATE_ALL_SLOTS = new int[] {0, 1, 2, 3, 4};
 	
 	@Override
@@ -171,4 +166,10 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 			return false;
 		}
 	}
+
+	@Override
+	public void onJoin(Player joined, Collection<? extends NPC> npcs) {}
+
+	@Override
+	public void onDespawn(NPC npc) {}
 }

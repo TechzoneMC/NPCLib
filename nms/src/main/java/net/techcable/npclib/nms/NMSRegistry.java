@@ -16,6 +16,9 @@ import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,9 +28,13 @@ import com.google.common.collect.Sets;
 import lombok.*;
 
 @Getter
-@RequiredArgsConstructor
-public class NMSRegistry implements NPCRegistry {
+public class NMSRegistry implements NPCRegistry, Listener {
 
+	public NMSRegistry(Plugin plugin) {
+		this.plugin = plugin;
+		Bukkit.getPluginManager().registerEvents(this, plugin);
+	}
+	
 	private static final EntityType[] SUPPORTED_TYPES = new EntityType[] {EntityType.PLAYER};
 	private final Plugin plugin;
 	private Map<UUID, NMSNPC> npcMap = new HashMap<>();
@@ -75,6 +82,11 @@ public class NMSRegistry implements NPCRegistry {
 		if (!isNPC(entity)) throw new IllegalStateException("Not an NPC");
 		return Util.getNMS().getAsNPC(entity);
 	}
+	
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		Util.getNMS().onJoin(event.getPlayer(), listNpcs());
+	}
 
 	@Override
 	public boolean isNPC(Entity entity) {
@@ -85,5 +97,4 @@ public class NMSRegistry implements NPCRegistry {
 	public Collection<? extends NPC> listNpcs() {
 		return Collections.unmodifiableCollection(getNpcMap().values());
 	}
-
 }

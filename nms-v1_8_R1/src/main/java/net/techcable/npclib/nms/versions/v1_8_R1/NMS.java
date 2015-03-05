@@ -2,6 +2,7 @@ package net.techcable.npclib.nms.versions.v1_8_R1;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +22,9 @@ import net.techcable.npclib.NPC;
 import net.techcable.npclib.nms.OptionalFeature;
 import net.techcable.npclib.util.ReflectUtil;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.mojang.authlib.GameProfile;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -80,6 +84,7 @@ public class NMS implements net.techcable.npclib.nms.NMS {
     @Override
     public Player spawnPlayer(Location toSpawn, String name, NPC npc) {
     	EntityNPCPlayer player = new EntityNPCPlayer(npc, name, toSpawn);
+    	sendPacketsTo(Bukkit.getOnlinePlayers(), new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, player));
     	WorldServer world = getHandle(toSpawn.getWorld());
     	world.addEntity(player);
     	look(player.getBukkitEntity(), toSpawn.getPitch(), toSpawn.getYaw());
@@ -139,20 +144,6 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 			return null;
 		}
 	}
-
-	@Override
-	public void notifyOfSpawn(Player[] toNotify, Player... npcs) {
-		EntityPlayer[] nmsNpcs = getHandles(npcs);
-		PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, nmsNpcs);
-		sendPacketsTo(toNotify, packet);
-	}
-
-	@Override
-	public void notifyOfDespawn(Player[] toNotify, Player... npcs) {
-		EntityPlayer[] nmsNpcs = getHandles(npcs);
-		PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, nmsNpcs);
-		sendPacketsTo(toNotify, packet);
-	}
 	
 	public static final int[] UPDATE_ALL_SLOTS = new int[] {0, 1, 2, 3, 4};
 	@Override
@@ -185,5 +176,27 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 		default :
 			return false;
 		}
+	}
+
+	@Override
+	public void onJoin(Player joined, Collection<? extends NPC> npcs) {
+		npcs = Collections2.filter(npcs, new Predicate<NPC>() {
+			@Override
+			public boolean apply(NPC npc) {
+				return npc.isSpawned() && npc instanceof Player;
+			}
+		});
+		Collection<? extends EntityPlayer> npcEntities = Collections2.transform(npcs, new Function<NPC, EntityPlayer>() {
+			@Override
+			public EntityPlayer apply(NPC arg0) {
+				return getHandle((Player)arg0.getEntity());
+			}
+		});
+		sendPacketsTo(new Player[] {joined}, new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, npcEntities.toArray(new EntityPlayer[npcEntities.size()])));
+	}
+
+	@Override
+	public void onDespawn(NPC npc) {
+		sendPacketsTo(Bukkit.getOnlinePlayers(), new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, getHandle((Player)npc.getEntity())));
 	}
 }

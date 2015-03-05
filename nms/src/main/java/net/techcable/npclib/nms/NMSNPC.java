@@ -34,7 +34,7 @@ import lombok.*;
 
 @Getter
 @Setter
-public class NMSNPC extends BukkitRunnable implements NPC, Listener {
+public class NMSNPC extends BukkitRunnable implements NPC {
 	
     public NMSNPC(UUID uuid, EntityType type, NMSRegistry registry) {
         if (!type.equals(EntityType.PLAYER)) throw new UnsupportedOperationException("Can only spawn players");
@@ -56,9 +56,9 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
     @Override
 	public boolean despawn() {
 	    if (!isSpawned()) return false;
+	    Util.getNMS().onDespawn(this);
 	    getEntity().remove();
 	    setEntity(null);
-	    run();
 	    cancel();
 	    getRegistry().deregister(this);
 	    return true;
@@ -110,7 +110,7 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
 	    Entity spawned = Util.spawn(toSpawn, getType(), getName(), this);
 	    if (spawned != null) {
 	        setEntity(spawned);
-	        update(Bukkit.getOnlinePlayers());
+	        tryEquipmentChangeNotify(Bukkit.getOnlinePlayers());
 	        return true;
 	    } else return false;
 	}
@@ -146,24 +146,9 @@ public class NMSNPC extends BukkitRunnable implements NPC, Listener {
 	    setSkin(profile.getId());
 	}
 	
-	//Update logic
-	
-	@EventHandler
-	public void onJoin(PlayerJoinEvent event) {
-	    if (!isSpawned()) return;
-		update(event.getPlayer());
-	}
-
-	public void update(Player... players) {
-		if (isSpawned()) {
-     Util.getNMS().notifyOfSpawn(players, (Player)getEntity());
-     tryEquipmentChangeNotify(players);
-  } else Util.getNMS().notifyOfDespawn(players, (Player)getEntity());
-	}
-	
 	@Override
 	public void run() {
-   if (!isSpawned()) return;
+		if (!isSpawned()) return;
 		tryEquipmentChangeNotify(Util.getNearbyPlayers(getRange(), getEntity().getLocation()));
 	}
 	

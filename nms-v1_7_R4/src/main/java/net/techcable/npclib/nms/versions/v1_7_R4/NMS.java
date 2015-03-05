@@ -2,6 +2,7 @@ package net.techcable.npclib.nms.versions.v1_7_R4;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +17,9 @@ import net.minecraft.server.v1_7_R4.Packet;
 import net.minecraft.server.v1_7_R4.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_7_R4.World;
 import net.minecraft.server.v1_7_R4.WorldServer;
+import net.minecraft.util.com.google.common.base.Function;
+import net.minecraft.util.com.google.common.base.Predicate;
+import net.minecraft.util.com.google.common.collect.Collections2;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.techcable.npclib.NPC;
 import net.techcable.npclib.nms.OptionalFeature;
@@ -78,6 +82,9 @@ public class NMS implements net.techcable.npclib.nms.NMS {
     @Override
     public Player spawnPlayer(Location toSpawn, String name, NPC npc) {
     	EntityNPCPlayer player = new EntityNPCPlayer(npc, name, toSpawn);
+    	if (ProtocolHack.isProtocolHack()) {
+    		ProtocolHack.notifyOfSpawn(Bukkit.getOnlinePlayers(), player.getBukkitEntity());
+    	}
     	WorldServer world = getHandle(toSpawn.getWorld());
     	world.addEntity(player);
     	look(player.getBukkitEntity(), toSpawn.getPitch(), toSpawn.getYaw());
@@ -130,20 +137,6 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 		}
 	}
 
-	@Override
-	public void notifyOfSpawn(Player toNotify[], Player... players) {
-            if (ProtocolHack.isProtocolHack()) {
-                ProtocolHack.notifyOfSpawn(toNotify, players);
-            }
-        }
-
-	@Override
-	public void notifyOfDespawn(Player[] toNotify, Player... npcs) {
-            if (ProtocolHack.isProtocolHack()) {
-                ProtocolHack.notifyOfDespawn(toNotify, npcs);
-            }
-        }
-
 	public static final int[] UPDATE_ALL_SLOTS = new int[] {0, 1, 2, 3, 4};
 	@Override
 	public void notifyOfEquipmentChange(Player[] toNotify, Player rawNpc, int... slots) {
@@ -177,6 +170,32 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 				return true;
 			default :
 				return false;
+		}
+	}
+
+	@Override
+	public void onJoin(Player joined, Collection<? extends NPC> npcs) {
+		if (ProtocolHack.isProtocolHack()) {
+			npcs = Collections2.filter(npcs, new Predicate<NPC>() {
+				@Override
+				public boolean apply(NPC arg0) {
+					return arg0.isSpawned() && arg0 instanceof Player;
+				}
+			});
+			Collection<? extends Player> npcEntities = Collections2.transform(null, new Function<NPC, Player>() {
+				@Override
+				public Player apply(NPC npc) {
+					return (Player) npc.getEntity();
+				}
+			});
+			ProtocolHack.notifyOfSpawn(new Player[] {joined}, npcEntities.toArray(new Player[npcEntities.size()]));
+		}
+	}
+
+	@Override
+	public void onDespawn(NPC npc) {
+		if (ProtocolHack.isProtocolHack()) {
+			ProtocolHack.notifyOfDespawn(Bukkit.getOnlinePlayers(), (Player)npc.getEntity());
 		}
 	}
 }
