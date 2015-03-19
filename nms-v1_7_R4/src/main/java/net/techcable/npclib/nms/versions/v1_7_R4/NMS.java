@@ -182,7 +182,7 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 					return arg0.isSpawned() && arg0 instanceof Player;
 				}
 			});
-			Collection<? extends Player> npcEntities = Collections2.transform(null, new Function<NPC, Player>() {
+			Collection<? extends Player> npcEntities = Collections2.transform(npcs, new Function<NPC, Player>() {
 				@Override
 				public Player apply(NPC npc) {
 					return (Player) npc.getEntity();
