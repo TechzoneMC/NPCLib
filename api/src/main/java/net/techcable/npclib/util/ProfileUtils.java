@@ -172,7 +172,7 @@ public class ProfileUtils {
         } else {
             dashed = raw;
         }
-        return UUID.fromString(raw);
+        return UUID.fromString(dashed);
     }
     
     private static JSONParser PARSER = new JSONParser();
