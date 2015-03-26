@@ -73,7 +73,7 @@ public class CitizensNPC implements net.techcable.npclib.NPC {
 	@Override
 	public void setSkin(UUID skin) {
 		if (skin == null) return;
-		getBacking().data().set(NPC.PLAYER_SKIN_UUID_METADATA, skin);
+		getBacking().data().set(NPC.PLAYER_SKIN_UUID_METADATA, skin.toString());
 		if (isSpawned()) {
 			despawn();
 			spawn(getBacking().getStoredLocation());
