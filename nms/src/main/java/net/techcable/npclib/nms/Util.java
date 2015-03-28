@@ -77,6 +77,7 @@ public class Util {
     public static Player[] getNearbyPlayers(int range, Location l) {
     	List<Player> nearby = new ArrayList<>(12);
     	for (Player p : Bukkit.getOnlinePlayers()) {
+    	    if (!p.getWorld().equals(l.getWorld())) continue; //Only compare players in the same world
     		double distance = p.getLocation().distanceSquared(l);
     		if (distance <= range) {
     			nearby.add(p);
