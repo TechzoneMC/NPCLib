@@ -201,8 +201,8 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 
 	@Override
 	public void onDespawn(NPC npc) {
-  	    WorldServer world = getHandle(npc.getLocation().getWorld());
-            world.removeEntity(getHandle(npc.getEntity()));
             sendPacketsTo(Bukkit.getOnlinePlayers(), new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, getHandle((Player)npc.getEntity())));
+	    WorldServer world = getHandle(npc.getEntity().getLocation().getWorld());
+            world.removeEntity(getHandle(npc.getEntity()));
 	}
 }
