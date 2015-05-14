@@ -1,10 +1,7 @@
 package net.techcable.npclib.nms.versions.v1_8_R1;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import net.minecraft.server.v1_8_R1.Entity;
 import net.minecraft.server.v1_8_R1.EntityHuman;
@@ -107,10 +104,10 @@ public class NMS implements net.techcable.npclib.nms.NMS {
     	return ((CraftPlayer)bukkitPlayer).getHandle();
     }
     
-    public static EntityPlayer[] getHandles(Player[] bukkitPlayers) {
-    	EntityPlayer[] handles = new EntityPlayer[bukkitPlayers.length];
-    	for (int i = 0; i < bukkitPlayers.length; i++) {
-    		handles[i] = getHandle(bukkitPlayers[i]);
+    public static Collection<EntityPlayer> getHandles(Iterable<? extends Player> bukkitPlayers) {
+    	List<EntityPlayer> handles = new ArrayList<>();
+    	for (Player bukkitPlayer : bukkitPlayers) {
+            handles.add(getHandle(bukkitPlayer));
     	}
     	return handles;
     }
@@ -154,11 +151,11 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 	    for (int slot : slots) {
 	        packets.add(new PacketPlayOutEntityEquipment(npc.getId(), slot, npc.getEquipment(slot)));
 	    }
-	    sendPacketsTo(toNotify, packets.toArray(new Packet[packets.size()]));
+	    sendPacketsTo(Arrays.asList(toNotify), packets.toArray(new Packet[packets.size()]));
 	}
 	
-	public void sendPacketsTo(Player[] recipients, Packet... packets) {
-	    EntityPlayer[] nmsRecipients = getHandles(recipients);
+	public void sendPacketsTo(Iterable<? extends Player> recipients, Packet... packets) {
+	    Collection<EntityPlayer> nmsRecipients = getHandles(recipients);
 		for (EntityPlayer recipient : nmsRecipients) {
 			if (recipient == null) continue;
 			for (Packet packet : packets) {
@@ -192,7 +189,7 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 				return getHandle((Player)arg0.getEntity());
 			}
 		});
-		sendPacketsTo(new Player[] {joined}, new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, npcEntities.toArray(new EntityPlayer[npcEntities.size()])));
+		sendPacketsTo(Arrays.asList(joined), new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, npcEntities.toArray(new EntityPlayer[npcEntities.size()])));
 	}
 
 	@Override
