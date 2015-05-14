@@ -1,96 +1,64 @@
 package net.techcable.npclib.citizens;
 
-import java.util.UUID;
 
+import com.google.common.base.Preconditions;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
-import net.citizensnpcs.api.npc.NPC;
-import net.techcable.npclib.util.ProfileUtils;
-import net.techcable.npclib.util.ProfileUtils.PlayerProfile;
+import java.lang.ref.WeakReference;
+import java.util.UUID;
 
-import lombok.*;
-
-@Getter
-@RequiredArgsConstructor
 public class CitizensNPC implements net.techcable.npclib.NPC {
-    private final UUID id;
-    private final CitizensNPCRegistry registry;
-    public NPC getBacking() {
-    	return getRegistry().getBacking().getByUniqueId(getId());
+    public CitizensNPC(NPC handle) {
+        this.handle = new WeakReference<NPC>(handle);
     }
 
-    public static CitizensNPC createNPC(NPC backing, CitizensNPCRegistry registry) {
-    	return new CitizensNPC(backing.getUniqueId(), registry);
+    public NPC getHandle() {
+        return handle.get();
     }
-    
-    //Implementation
+    private final WeakReference<NPC> handle;
+
     @Override
-	public boolean despawn() {
-	    if (isSpawned()) getBacking().despawn();
-	    getBacking().destroy();
-	    getRegistry().deregister(this);
-	    return true;
+    public boolean despawn() {
+        if (getHandle() == null || !isSpawned()) throw new IllegalStateException("Already despawned");
+        getHandle().despawn();
+        getHandle().destroy();
+        return true;
     }
-	@Override
-	public void faceLocation(Location toFace) {
-	    getBacking().faceLocation(toFace);
-	}
-	@Override
-	public Entity getEntity() {
-	    return getBacking().getEntity();
-	}
-	@Override
-	public String getName() {
-	    return getBacking().getName();
-	}
-	@Override
-	public UUID getUUID() {
-	    return getBacking().getUniqueId();
-	}
-	@Override
-	public boolean isSpawned() {
-	    return getBacking().isSpawned();
-	}
-	@Override
-	public void setName(String name) {
-	    getBacking().setName(name);
-	}
-	@Override
-	public boolean spawn(Location toSpawn) {
-	    return getBacking().spawn(toSpawn);
-	}
-	@Override
-	public void setProtected(boolean protect) {
-		getBacking().setProtected(protect);
-	}
-	@Override
-	public boolean isProtected() {
-		return getBacking().isProtected();
-	}
-	
-	@Override
-	public void setSkin(UUID skin) {
-		if (skin == null) return;
-		getBacking().data().set(NPC.PLAYER_SKIN_UUID_METADATA, skin.toString());
-		if (isSpawned()) {
-			despawn();
-			spawn(getBacking().getStoredLocation());
-		}
-	}
-	
-	@Override
-	public void setSkin(String skin) {
-	    if (skin == null) return;
-	    PlayerProfile profile = ProfileUtils.lookup(skin);
-	    if (profile == null) return;
-	    setSkin(profile.getId());
-	}
-	
-	@Override
-	public UUID getSkin() {
-		if (!getBacking().data().has(NPC.PLAYER_SKIN_UUID_METADATA)) return null;
-		return getBacking().data().get(NPC.PLAYER_SKIN_UUID_METADATA);
-	}
+
+    @Override
+    public Entity getEntity() {
+        if (getHandle() == null) return null;
+        return getHandle().getEntity();
+    }
+
+    @Override
+    public UUID getUUID() {
+        return getHandle().getUniqueId();
+    }
+
+    @Override
+    public boolean isSpawned() {
+        return getHandle() != null && getHandle().isSpawned();
+    }
+
+    @Override
+    public boolean spawn(Location toSpawn) {
+        Preconditions.checkState(getHandle() != null, "This npc has been destroyed");
+        Preconditions.checkState(!isSpawned(), "Already spawned");
+        return getHandle().spawn(toSpawn);
+    }
+
+    @Override
+    public void setProtected(boolean protect) {
+        Preconditions.checkState(getHandle() != null, "This npc has been destroyed");
+        getHandle().setProtected(protect);
+    }
+
+    @Override
+    public boolean isProtected() {
+        if (getHandle() == null) return false;
+        return getHandle().isProtected();
+    }
 }

@@ -1,12 +1,9 @@
 package net.techcable.npclib.citizens;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.lang.reflect.Field;
+import java.util.*;
 
+import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -14,8 +11,11 @@ import net.citizensnpcs.api.npc.SimpleNPCDataStore;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Storage;
-import net.techcable.npclib.NPC;
 
+import net.techcable.npclib.HumanNPC;
+import net.techcable.npclib.LivingNPC;
+import net.techcable.npclib.NPC;
+import net.techcable.npclib.util.ReflectUtil;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
@@ -29,33 +29,37 @@ import lombok.RequiredArgsConstructor;
 public class CitizensNPCRegistry implements net.techcable.npclib.NPCRegistry {
 	@Getter
 	private final NPCRegistry backing;
-	private final Map<UUID, NPC> npcMap = new HashMap<>();
+	private final Map<UUID, net.techcable.npclib.NPC> npcMap = new WeakHashMap<>();
 	@Getter
 	private final Plugin plugin;
 	private IDTracker idTracker = new IDTracker();
 
-	public NPC convertNPC(net.citizensnpcs.api.npc.NPC citizensNpc) {
-		return npcMap.get(citizensNpc.getUniqueId());
-	}
-	public net.citizensnpcs.api.npc.NPC convertNPC(NPC techcableNpc) {
-		return ((CitizensNPC)techcableNpc).getBacking();
-	}
-	
-	public NPC createNPC(EntityType type, String name) {
-		return createNPC(type, UUID.randomUUID(), name);
-	}
+    public net.citizensnpcs.api.npc.NPC convertNPC(NPC npc) {
+        return ((CitizensNPC)npc).getHandle();
+    }
 
-	public NPC createNPC(EntityType type, UUID uuid, String name) {
-		if (getByUUID(uuid) != null) throw new IllegalArgumentException("uuid is already in use");
-		net.citizensnpcs.api.npc.NPC npc = getBacking().createNPC(type, uuid, idTracker.getNextId(), name);
-		NPC techcableNpc = CitizensNPC.createNPC(npc, this);
-		npcMap.put(npc.getUniqueId(), techcableNpc);
-		return techcableNpc;
-	}
 
-	public void deregister(NPC npc) {
+    public NPC convertNPC(net.citizensnpcs.api.npc.NPC npc) {
+        return npcMap.get(npc.getUniqueId());
+    }
+
+    @Override
+    public HumanNPC createHumanNPC(String name) {
+        return createHumanNPC(UUID.randomUUID(), name);
+    }
+
+    @Override
+    public HumanNPC createHumanNPC(UUID uuid, String name) {
+        net.citizensnpcs.api.npc.NPC citizens = getBacking().createNPC(EntityType.PLAYER, uuid, idTracker.getNextId(), name);
+        HumanNPC npc = new HumanCitizensNPC(citizens);
+        npcMap.put(npc.getUUID(), npc);
+        return npc;
+    }
+
+    public void deregister(NPC npc) {
 		if (npc.isSpawned()) throw new IllegalStateException("Npc is spawned");
 		getBacking().deregister(convertNPC(npc));
+        idTracker.removeId(convertNPC(npc).getId());
 		npcMap.remove(npc.getUUID());
 	}
 
@@ -68,7 +72,15 @@ public class CitizensNPCRegistry implements net.techcable.npclib.NPCRegistry {
 		return npcMap.get(uuid);
 	}
 
-	public NPC getAsNPC(Entity entity) {
+    @Override
+    public NPC getByName(String name) {
+        for (NPC npc : npcMap.values()) {
+            if (npc instanceof LivingNPC && ((LivingNPC)npc).getName().equals(name)) return npc;
+        }
+        return null;
+    }
+
+    public NPC getAsNPC(Entity entity) {
 		return convertNPC(getBacking().getNPC(entity));
 	}
 
@@ -79,27 +91,34 @@ public class CitizensNPCRegistry implements net.techcable.npclib.NPCRegistry {
 	public Collection<NPC> listNpcs() {
 		return npcMap.values();
 	}
-	
+
+    private static final Map<String, CitizensNPCRegistry> registryMap = new WeakHashMap<>();
+    private static CitizensNPCRegistry defaultRegistry;
+
 	public static CitizensNPCRegistry getRegistry(Plugin plugin) {
-       	if (CitizensAPI.getNamedNPCRegistry("NPCLib") == null) {
-	        CitizensAPI.createNamedNPCRegistry("NPCLib", makeDataStore());
-	    }
-	    return new CitizensNPCRegistry(CitizensAPI.getNamedNPCRegistry("NPCLib"), plugin);
+       	if (defaultRegistry == null) {
+	        NPCRegistry citizensRegistry = CitizensAPI.createNamedNPCRegistry("NPCLib", makeDataStore());
+	        CitizensNPCRegistry wrapper = new CitizensNPCRegistry(citizensRegistry, plugin);
+            defaultRegistry = wrapper;
+        }
+	    return defaultRegistry;
 	}
 	
 	public static CitizensNPCRegistry getRegistry(String registryName, Plugin plugin) {
-	    if (CitizensAPI.getNamedNPCRegistry("NPCLib." + registryName) == null) {
-	        CitizensAPI.createNamedNPCRegistry("NPCLib." + registryName, makeDataStore());
+	    if (!registryMap.containsKey(registryName)) {
+	        NPCRegistry citizensRegistry = CitizensAPI.createNamedNPCRegistry("NPCLib." + registryName, makeDataStore());
+            CitizensNPCRegistry wrapper = new CitizensNPCRegistry(citizensRegistry, plugin);
+            registryMap.put(registryName, wrapper);
 	    }
-	    return new CitizensNPCRegistry(CitizensAPI.getNamedNPCRegistry("NPCLib." + registryName), plugin);
+	    return registryMap.get(registryName);
 	}
 	
 	private static NPCDataStore makeDataStore() {
 	    Storage storage = new MemoryStorage();
 	    return SimpleNPCDataStore.create(storage);
 	}
-	
-	public static class MemoryStorage implements Storage {
+
+    public static class MemoryStorage implements Storage {
 	    
 	    public DataKey dataKey = new MemoryDataKey();
 	    
@@ -151,4 +170,8 @@ public class CitizensNPCRegistry implements net.techcable.npclib.NPCRegistry {
 			return usedIds.contains(id);
 		}
 	}
+
+    public static Collection<CitizensNPCRegistry> getRegistries() {
+        return registryMap.values();
+    }
 }

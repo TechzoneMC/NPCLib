@@ -9,21 +9,24 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
 
 public interface NPCRegistry {
+
 	/**
-	 * Creates a despawned npc
-	 * @param type {@link EntityType} of the NPC
+	 * Creates a despawned human npc
+     *
 	 * @param name the name of the npc
 	 * @return the new npc
 	 */
-	public NPC createNPC(EntityType type, String name);
+	public HumanNPC createHumanNPC(String name);
+
 	/**
-	 * Creates a despawned npc
-	 * @param type {@link EntityType} of the NPC
+	 * Creates a despawned human npc
+     *
 	 * @param uuid the uuid of the new npc
 	 * @param name the name of the npc
 	 * @return the new npc
 	 */
-	public NPC createNPC(EntityType type, UUID uuid, String name);
+	public HumanNPC createHumanNPC(UUID uuid, String name);
+
 	/**
 	 * Removes this npc from the registry
 	 * Be careful not to remove despawned npcs
@@ -31,6 +34,7 @@ public interface NPCRegistry {
 	 * @param npc the npc to deregister
 	 */
 	public void deregister(NPC npc);
+
 	/**
 	 * Deregisters every npc in the registry
 	 */
@@ -41,7 +45,23 @@ public interface NPCRegistry {
 	 * @return the npc with this uuid
 	 */
 	public NPC getByUUID(UUID uuid);
-	
+
+    /**
+     * Retreives a npc with the given name
+     *
+     * <p>
+     * There may be multiple npcs with a name, so this method may not return the one you want
+     * If you want to guarentee unqiueness, use uuids
+     * </p>
+     *
+     * @deprecated there may be multiple npcs with the given name
+     * @param name the name to get a npc with
+     * @since 2.0
+     * @return a npc with the given name
+     */
+    @Deprecated
+    public NPC getByName(String name);
+
 	/**
 	 * Converts an Entity to an NPC
 	 * @param entity the npc to get as an entity
@@ -67,4 +87,5 @@ public interface NPCRegistry {
 	 * @return the registry's plugin
 	 */
 	public Plugin getPlugin();
+
 }

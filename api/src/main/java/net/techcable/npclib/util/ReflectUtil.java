@@ -18,7 +18,16 @@ public class ReflectUtil {
 			throw new RuntimeException(ex);
 		}	
 	}
-	
+
+    public static <T> T getField(Field field, Object instance) {
+        field.setAccessible(true);
+        try {
+            return (T) field.get(instance);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 	public static void setField(Field field, Object objToSet, Object value) {
 		field.setAccessible(true);
 		try {

@@ -17,7 +17,7 @@
   	</dependency>
   	<dependency>
   		<groupId>net.citizensnpcs</groupId>
-  		<artifactId>citizensapi</artifactId>
+  		<artifactId>citizens</artifactId>
   		<version>2.0.13-SNAPSHOT</version>
   		<scope>provided</scope>
   	</dependency>

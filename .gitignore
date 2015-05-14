@@ -8,3 +8,7 @@ release.properties
 
 #Emacs
 *~
+
+#IntelliJ
+*.iml
+/.idea

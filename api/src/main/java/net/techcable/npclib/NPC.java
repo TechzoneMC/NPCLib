@@ -4,9 +4,17 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * Represents a non player controlled entity
+ *
+ * @author Techcable
+ * @version 2.0
+ * @since 1.0
+ */
 public interface NPC {
 	/**
 	 * Despawn this npc
@@ -17,22 +25,14 @@ public interface NPC {
 	 * @return true if was able to despawn
 	 */
 	public boolean despawn();
-	/**
-	 * The npc's head will look in this direction
-	 * @param toFace the direction to look
-	 */
-	public void faceLocation(Location toFace);
-	
-	/**
-	 * Get the entity associated with this npc
-	 * @return the entity
-	 */
-	public Entity getEntity();
-	/**
-	 * Retrieve the name of this npc
-	 * @return this npc's name
-	 */
-	public String getName();
+
+    /**
+     * Get the entity associated with this npc
+     *
+     * @return the entity
+     */
+    public Entity getEntity();
+
 	/**
 	 * Get this npc's uuid
 	 * @return the uuid of this npc
@@ -43,12 +43,6 @@ public interface NPC {
 	 * @return true if the npc is spawned
 	 */
 	public boolean isSpawned();
-	
-	/**
-	 * Set the current name of the npc
-	 * @param name the new name
-	 */
-	public void setName(String name);
 	
 	/**
 	 * Spawn this npc
@@ -69,35 +63,4 @@ public interface NPC {
 	 * @return The protected status of the NPC
 	 */
 	public boolean isProtected();
-	
-	/**
-	 * Return this npc's skin
-	 * 
-	 * A value of null represents a steve skin
-	 * 
-	 * @return this npc's skin
-	 */
-	public UUID getSkin();
-	
-	/**
-	 * Set the npc's skin
-	 * 
-	 * A value of null represents a steve skin
-	 * 
-	 * @param skin the player id with the skin you want
-	 * 
-	 * @throws UnsupportedOperationException if skins aren't supported
-	 */
-	public void setSkin(UUID skin);
-	
-	/**
-	 * Set the npc's skin
-	 * 
-	 * A value f null represents a steve skin
-	 * 
-	 * @param skin the player name with the skin you want
-	 * 
-	 * @throws UnsupportedOperationException if skins aren't supported
-	 */
-	public void setSkin(String skin);
 }
