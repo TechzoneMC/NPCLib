@@ -1,19 +1,12 @@
 package net.techcable.npclib.nms.versions.v1_8_R2;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.util.*;
 
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityHuman;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import net.minecraft.server.v1_8_R3.*;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
-import net.minecraft.server.v1_8_R3.MinecraftServer;
-import net.minecraft.server.v1_8_R3.Packet;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_8_R3.WorldServer;
 
 import net.techcable.npclib.NPC;
 import net.techcable.npclib.nms.OptionalFeature;
@@ -23,8 +16,8 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 
-import java.util.Arrays;
-
+import net.techcable.npclib.util.ProfileUtils;
+import net.techcable.npclib.util.ReflectUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
@@ -34,6 +27,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
 
 public class NMS implements net.techcable.npclib.nms.NMS {
 	
@@ -79,14 +73,53 @@ public class NMS implements net.techcable.npclib.nms.NMS {
     
     @Override
     public Player spawnPlayer(Location toSpawn, String name, NPC npc) {
-    	EntityNPCPlayer player = new EntityNPCPlayer(npc, name, toSpawn);
+        GameProfile profile = skinMap.get(npc.getUUID()) != null ? skinMap.get(npc.getUUID()) : new GameProfile(npc.getUUID(), npc.getName());
+    	EntityNPCPlayer player = new EntityNPCPlayer(npc, profile, toSpawn);
     	sendPacketsTo(Bukkit.getOnlinePlayers(), new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, player));
     	WorldServer world = getHandle(toSpawn.getWorld());
     	world.addEntity(player);
     	look(player.getBukkitEntity(), toSpawn.getPitch(), toSpawn.getYaw());
     	return player.getBukkitEntity();
     }
-    
+
+
+    private Map<UUID, GameProfile> skinMap = new HashMap<>();
+    private static final Field playerInfoActionField = PacketPlayOutPlayerInfo.class.getFields()[0];
+    private static final Field playerInfoDataListField = PacketPlayOutPlayerInfo.class.getFields()[1];
+    @Override
+    public boolean setSkin(NPC npc, ProfileUtils.PlayerProfile skinProfile) {
+        GameProfile profile = makeProfile(npc, skinProfile);
+        if (npc.isSpawned()) {
+            PacketPlayOutPlayerInfo removePacket = new PacketPlayOutPlayerInfo();
+            ReflectUtil.setField(playerInfoActionField, removePacket, EnumPlayerInfoAction.REMOVE_PLAYER);
+            List<PacketPlayOutPlayerInfo.PlayerInfoData> removePacketDataList = ReflectUtil.getField(playerInfoDataListField, removePacket);
+            removePacketDataList.add(removePacket.new PlayerInfoData(profile, 0, null, null));
+            PacketPlayOutPlayerInfo addPacket = new PacketPlayOutPlayerInfo();
+            ReflectUtil.setField(playerInfoActionField, addPacket, EnumPlayerInfoAction.ADD_PLAYER);
+            List<PacketPlayOutPlayerInfo.PlayerInfoData> addPlayerDataList = ReflectUtil.getField(playerInfoDataListField, removePacket);
+            EntityPlayer handle = getHandle((Player) npc.getEntity());
+            WorldSettings.EnumGamemode gamemode = handle.playerInteractManager.getGameMode();
+            IChatBaseComponent displayName = handle.getPlayerListName();
+            addPlayerDataList.add(addPacket.new PlayerInfoData(profile, 0, gamemode, displayName));
+        } else skinMap.put(npc.getUUID(), profile);
+        return false;
+    }
+
+    private static GameProfile makeProfile(NPC npc, ProfileUtils.PlayerProfile skinProfile) {
+        GameProfile profile = new GameProfile(npc.getUUID(), npc.getName());
+        if (skinProfile == null || skinProfile.getProperties() != null) {
+            for (Object obj : skinProfile.getProperties()) {
+                JSONObject jsonProperty = (JSONObject) obj;
+                String name = (String) jsonProperty.get("name");
+                String value = (String) jsonProperty.get("value");
+                String signature = jsonProperty.containsKey("signature") ? (String) jsonProperty.get("signature") : null;
+                Property property = signature == null ? new Property(name, value) : new Property(name, value, signature);
+                profile.getProperties().put(name, property);
+            }
+        }
+        return profile;
+    }
+
     public static Entity getHandle(org.bukkit.entity.Entity bukkitEntity) {
         if (!(bukkitEntity instanceof CraftEntity))
             return null;

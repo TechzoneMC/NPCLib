@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import net.techcable.npclib.nms.skins.RateLimitedException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -60,7 +61,7 @@ public class ProfileUtils {
      * @param id look for a profile with this uuid
      * @return a profile with the given id
      */
-    public static PlayerProfile lookup(UUID id) {
+    public static PlayerProfile lookup(UUID id) throws RateLimitedException {
         return lookupProperties(id);
     }
 
@@ -133,11 +134,15 @@ public class ProfileUtils {
         return profiles;
     }
     
-    private static PlayerProfile lookupProperties(UUID id) {
+    private static PlayerProfile lookupProperties(UUID id) throws RateLimitedException {
         if (idCache.contains(id)) return idCache.get(id);
         Object rawResponse = getJson("https://sessionserver.mojang.com/session/minecraft/profile/" + id.toString().replace("-", ""));
         if (rawResponse == null || !(rawResponse instanceof JSONObject)) return null;
         JSONObject response = (JSONObject) rawResponse;
+        if (response.containsKey("errror")) {
+            if (response.get("error").equals("TooManyRequestsException")) throw new RateLimitedException();
+            return null;
+        }
         PlayerProfile profile = deserializeProfile(response);
         if (profile == null) return null;
         idCache.put(id, profile);
@@ -183,7 +188,6 @@ public class ProfileUtils {
             URL url = new URL(rawUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             StringBuffer result = new StringBuffer();
             String line;
