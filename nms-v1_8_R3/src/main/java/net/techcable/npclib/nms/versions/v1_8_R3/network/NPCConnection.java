@@ -1,9 +1,9 @@
-package net.techcable.npclib.nms.versions.v1_8_R2.network;
+package net.techcable.npclib.nms.versions.v1_8_R3.network;
 
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
-import net.techcable.npclib.nms.versions.v1_8_R2.EntityNPCPlayer;
-import net.techcable.npclib.nms.versions.v1_8_R2.NMS;
+import net.techcable.npclib.nms.versions.v1_8_R3.EntityNPCPlayer;
+import net.techcable.npclib.nms.versions.v1_8_R3.NMS;
 import lombok.*;
 
 @Getter

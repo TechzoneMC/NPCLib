@@ -1,4 +1,4 @@
-package net.techcable.npclib.nms.versions.v1_8_R2.network;
+package net.techcable.npclib.nms.versions.v1_8_R3.network;
 
 import java.net.SocketAddress;
 

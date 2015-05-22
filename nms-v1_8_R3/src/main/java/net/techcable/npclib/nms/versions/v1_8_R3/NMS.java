@@ -1,4 +1,4 @@
-package net.techcable.npclib.nms.versions.v1_8_R2;
+package net.techcable.npclib.nms.versions.v1_8_R3;
 
 import java.lang.reflect.Field;
 import java.util.*;

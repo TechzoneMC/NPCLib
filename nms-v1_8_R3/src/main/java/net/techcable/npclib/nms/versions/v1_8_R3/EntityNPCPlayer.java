@@ -1,8 +1,6 @@
-package net.techcable.npclib.nms.versions.v1_8_R2;
+package net.techcable.npclib.nms.versions.v1_8_R3;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-import java.util.UUID;
 
 import lombok.*;
 import net.minecraft.server.v1_8_R3.DamageSource;
@@ -10,7 +8,7 @@ import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.PlayerInteractManager;
 import net.minecraft.server.v1_8_R3.WorldSettings.EnumGamemode;
 import net.techcable.npclib.NPC;
-import net.techcable.npclib.nms.versions.v1_8_R2.network.NPCConnection;
+import net.techcable.npclib.nms.versions.v1_8_R3.network.NPCConnection;
 import org.bukkit.Location;
 
 @Getter
