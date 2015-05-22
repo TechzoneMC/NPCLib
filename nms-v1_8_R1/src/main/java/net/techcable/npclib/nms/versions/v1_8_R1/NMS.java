@@ -83,8 +83,8 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 
 
     private Map<UUID, GameProfile> skinMap = new HashMap<>();
-    private static final Field playerInfoActionField = PacketPlayOutPlayerInfo.class.getFields()[0];
-    private static final Field playerInfoDataListField = PacketPlayOutPlayerInfo.class.getFields()[1];
+    private static final Field playerInfoActionField = PacketPlayOutPlayerInfo.class.getDeclaredFields()[0];
+    private static final Field playerInfoDataListField = PacketPlayOutPlayerInfo.class.getDeclaredFields()[1];
     @Override
     public boolean setSkin(NPC npc, ProfileUtils.PlayerProfile skinProfile) {
         GameProfile profile = makeProfile(npc, skinProfile);
