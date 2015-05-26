@@ -107,7 +107,7 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 
     private static GameProfile makeProfile(NPC npc, ProfileUtils.PlayerProfile skinProfile) {
         GameProfile profile = new GameProfile(npc.getUUID(), npc.getName());
-        if (skinProfile == null || skinProfile.getProperties() != null) {
+        if (skinProfile != null && skinProfile.getProperties() != null) {
             for (Object obj : skinProfile.getProperties()) {
                 JSONObject jsonProperty = (JSONObject) obj;
                 String name = (String) jsonProperty.get("name");
