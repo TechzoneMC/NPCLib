@@ -16,8 +16,8 @@ import org.bukkit.Location;
 @Getter
 public class EntityNPCPlayer extends EntityPlayer {
 	private final NPC npc;
-	public EntityNPCPlayer(NPC npc, GameProfile profile, Location location) {
-		super(NMS.getServer(), NMS.getHandle(location.getWorld()), profile, new PlayerInteractManager(NMS.getHandle(location.getWorld())));
+	public EntityNPCPlayer(NPC npc, String name, Location location) {
+		super(NMS.getServer(), NMS.getHandle(location.getWorld()), makeProfile(name, npc.getSkin()), new PlayerInteractManager(NMS.getHandle(location.getWorld())));
 		playerInteractManager.b(EnumGamemode.SURVIVAL); //MCP = initializeGameType ---- SRG=func_73077_b
 		this.npc = npc;
 		playerConnection = new NPCConnection(this);

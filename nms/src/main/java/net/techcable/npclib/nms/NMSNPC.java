@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import net.techcable.npclib.NPC;
-import net.techcable.npclib.nms.skins.RateLimitedException;
 import net.techcable.npclib.util.ProfileUtils;
 import net.techcable.npclib.util.ProfileUtils.PlayerProfile;
 
@@ -108,9 +107,6 @@ public class NMSNPC extends BukkitRunnable implements NPC {
 	@Override
 	public boolean spawn(Location toSpawn) {
 	    if (isSpawned()) return false;
-        if (skin != null) {
-            trySetSkin();
-        }
 	    Entity spawned = Util.spawn(toSpawn, getType(), getName(), this);
 	    if (spawned != null) {
 	        setEntity(spawned);
@@ -135,44 +131,13 @@ public class NMSNPC extends BukkitRunnable implements NPC {
 	public void setSkin(UUID skin) {
 		if (!Util.getNMS().isSupported(OptionalFeature.SKINS)) throw new UnsupportedOperationException();
 		this.skin = skin;
-        trySetSkin();
+		if (isSpawned()) {
+			Location last = getEntity().getLocation();
+			getEntity().remove();
+			Util.spawn(last, EntityType.PLAYER, getName(), this);
+		}
 	}
-
-    private void trySetSkin() {
-        final PlayerProfile skinProfile;
-        try {
-            skinProfile = ProfileUtils.lookup(skin);
-            if (Bukkit.isPrimaryThread()) {
-                boolean respawnNeeded = Util.getNMS().setSkin(this, skinProfile);
-                if (respawnNeeded && isSpawned()) {
-                    Location last = getEntity().getLocation();
-                    getEntity().remove();
-                    Util.spawn(last, EntityType.PLAYER, getName(), this);
-                }
-            } else {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        boolean respawnNeeded = Util.getNMS().setSkin(NMSNPC.this, skinProfile);
-                        if (respawnNeeded && isSpawned()) {
-                            Location last = getEntity().getLocation();
-                            getEntity().remove();
-                            Util.spawn(last, EntityType.PLAYER, getName(), NMSNPC.this);
-                        }
-                    }
-                }.runTask(registry.getPlugin());
-            }
-        } catch (RateLimitedException ex) {
-            Bukkit.getLogger().info("[NPCLib] Unable to request uuid for npc " + getName() + ". Requesting again in 70 seconds.");
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    trySetSkin();
-                }
-            }.runTaskLaterAsynchronously(registry.getPlugin(), 1400);
-        }
-    }
-
+	
 	@Override
 	public void setSkin(String skin) {
 	    if (skin == null) return;

@@ -27,15 +27,6 @@ public class ReflectUtil {
 			throw new RuntimeException(e);
 		}
 	}
-
-    public static <T> T getField(Field field, Object objToSet) {
-        field.setAccessible(true);
-        try {
-            return (T) field.get(objToSet);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
 	
 	public static Method makeMethod(Class<?> clazz, String methodName, Class<?>... paramaters) {
 	    try {

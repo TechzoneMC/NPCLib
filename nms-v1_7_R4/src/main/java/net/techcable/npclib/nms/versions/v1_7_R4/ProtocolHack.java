@@ -1,8 +1,6 @@
 package net.techcable.npclib.nms.versions.v1_7_R4;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
 
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -19,13 +17,11 @@ public class ProtocolHack {
     	return ((CraftPlayer)bukkitPlayer).getHandle();
     }
 
-    private static EntityPlayer[] getHandles(Collection<? extends Player> bukkitPlayers) {
-    	EntityPlayer[] handles = new EntityPlayer[bukkitPlayers.size()];
-    	int i = 0;
-        for (Player bukkitPlayer : bukkitPlayers) {
-    		handles[i] = getHandle(bukkitPlayer);
-    	    i++;
-        }
+    private static EntityPlayer[] getHandles(Player[] bukkitPlayers) {
+    	EntityPlayer[] handles = new EntityPlayer[bukkitPlayers.length];
+    	for (int i = 0; i < bukkitPlayers.length; i++) {
+    		handles[i] = getHandle(bukkitPlayers[i]);
+    	}
     	return handles;
     }
     
@@ -38,9 +34,9 @@ public class ProtocolHack {
         }
     }
     
-    public static void notifyOfSpawn(Collection<? extends Player> toNotify, Player... npcs) {
+    public static void notifyOfSpawn(Player[] toNotify, Player... npcs) {
         Method addPlayer = ReflectUtil.makeMethod(getPlayerInfoClass(), "addPlayer", EntityPlayer.class);
-        EntityPlayer[] handles = getHandles(Arrays.asList(npcs));
+        EntityPlayer[] handles = getHandles(npcs);
         Packet[] packets = new Packet[handles.length];
         for (int i = 0; i < handles.length; i++) {
             EntityPlayer handle = handles[i];
@@ -50,9 +46,9 @@ public class ProtocolHack {
         sendPacketsTo(toNotify, packets);
     }
     
-    public static void notifyOfDespawn(Collection<? extends Player> toNotify, Player... npcs) {
+    public static void notifyOfDespawn(Player[] toNotify, Player... npcs) {
         Method removePlayer = ReflectUtil.makeMethod(getPlayerInfoClass(), "removePlayer", EntityPlayer.class);
-        EntityPlayer[] handles = getHandles(Arrays.asList(npcs));
+        EntityPlayer[] handles = getHandles(npcs);
         Packet[] packets = new Packet[handles.length];
         for (int i = 0; i < handles.length; i++) {
             EntityPlayer handle = handles[i];
@@ -70,7 +66,7 @@ public class ProtocolHack {
         }
     }
     
-    public static void sendPacketsTo(Collection<? extends Player> recipients, Packet... packets) {
+    public static void sendPacketsTo(Player[] recipients, Packet... packets) {
 	    EntityPlayer[] nmsRecipients = getHandles(recipients);
 		for (EntityPlayer recipient : nmsRecipients) {
 			if (recipient == null) continue;

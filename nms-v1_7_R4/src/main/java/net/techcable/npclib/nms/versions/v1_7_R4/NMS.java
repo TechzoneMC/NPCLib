@@ -1,7 +1,10 @@
 package net.techcable.npclib.nms.versions.v1_7_R4;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 import net.minecraft.server.v1_7_R4.ChunkCoordinates;
 import net.minecraft.server.v1_7_R4.Entity;
@@ -18,10 +21,8 @@ import net.minecraft.util.com.google.common.base.Function;
 import net.minecraft.util.com.google.common.base.Predicate;
 import net.minecraft.util.com.google.common.collect.Collections2;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
-import net.minecraft.util.com.mojang.authlib.properties.Property;
 import net.techcable.npclib.NPC;
 import net.techcable.npclib.nms.OptionalFeature;
-import net.techcable.npclib.util.ProfileUtils;
 import net.techcable.npclib.util.ReflectUtil;
 
 import org.bukkit.Bukkit;
@@ -35,7 +36,6 @@ import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.json.simple.JSONObject;
 
 public class NMS implements net.techcable.npclib.nms.NMS {
 	
@@ -78,44 +78,19 @@ public class NMS implements net.techcable.npclib.nms.NMS {
             handle.aM = yaw; //MCP = renderYawOffset
         handle.aP = yaw; //MCP = prevRotationYawHead
     }
-
-    private Map<UUID, GameProfile> profileMap = new HashMap<>();
+    
     @Override
     public Player spawnPlayer(Location toSpawn, String name, NPC npc) {
-        GameProfile profile = profileMap.get(npc.getUUID()) != null ? profileMap.get(npc.getUUID()) : new GameProfile(npc.getUUID(), npc.getName());
-    	EntityNPCPlayer player = new EntityNPCPlayer(npc, profile, toSpawn);
+    	EntityNPCPlayer player = new EntityNPCPlayer(npc, name, toSpawn);
     	if (ProtocolHack.isProtocolHack()) {
     		ProtocolHack.notifyOfSpawn(Bukkit.getOnlinePlayers(), player.getBukkitEntity());
     	}
     	WorldServer world = getHandle(toSpawn.getWorld());
-        world.addEntity(player);
+    	world.addEntity(player);
     	look(player.getBukkitEntity(), toSpawn.getPitch(), toSpawn.getYaw());
     	return player.getBukkitEntity();
     }
-
-    @Override
-    public boolean setSkin(NPC npc, ProfileUtils.PlayerProfile skinProfile) {
-        GameProfile profile = makeProfile(npc, skinProfile);
-        profileMap.put(npc.getUUID(), profile);
-        return true;
-    }
-
-    private static GameProfile makeProfile(NPC npc, ProfileUtils.PlayerProfile skinProfile) {
-        GameProfile profile = new GameProfile(npc.getUUID(), npc.getName());
-        if (skinProfile.getProperties() != null) {
-            for (Object obj : skinProfile.getProperties()) {
-                JSONObject jsonProperty = (JSONObject) obj;
-                String name = (String) jsonProperty.get("name");
-                String value = (String) jsonProperty.get("value");
-                String signature = jsonProperty.containsKey("signature") ? (String) jsonProperty.get("signature") : null;
-                Property property = signature == null ? new Property(name, value) : new Property(name, value, signature);
-                profile.getProperties().put(name, property);
-            }
-        }
-        return profile;
-    }
-
-
+    
     public static Entity getHandle(org.bukkit.entity.Entity bukkitEntity) {
         if (!(bukkitEntity instanceof CraftEntity))
             return null;
@@ -213,7 +188,7 @@ public class NMS implements net.techcable.npclib.nms.NMS {
 					return (Player) npc.getEntity();
 				}
 			});
-			ProtocolHack.notifyOfSpawn(Arrays.asList(joined), npcEntities.toArray(new Player[npcEntities.size()]));
+			ProtocolHack.notifyOfSpawn(new Player[] {joined}, npcEntities.toArray(new Player[npcEntities.size()]));
 		}
 	}
 
