@@ -1,12 +1,15 @@
 package net.techcable.npclib.citizens;
 
-import com.google.common.base.Preconditions;
 import net.citizensnpcs.api.npc.NPC;
 import net.techcable.npclib.LivingNPC;
+
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
+import com.google.common.base.Preconditions;
+
 public class LivingCitizensNPC extends CitizensNPC implements LivingNPC {
+
     public LivingCitizensNPC(NPC handle) {
         super(handle);
     }

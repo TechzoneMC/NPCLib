@@ -1,15 +1,18 @@
 package net.techcable.npclib.citizens;
 
 
-import com.google.common.base.Preconditions;
-import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-
 import java.lang.ref.WeakReference;
 import java.util.UUID;
 
+import net.citizensnpcs.api.npc.NPC;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+
+import com.google.common.base.Preconditions;
+
 public class CitizensNPC implements net.techcable.npclib.NPC {
+
     public CitizensNPC(NPC handle) {
         this.handle = new WeakReference<NPC>(handle);
     }
@@ -17,14 +20,14 @@ public class CitizensNPC implements net.techcable.npclib.NPC {
     public NPC getHandle() {
         return handle.get();
     }
+
     private final WeakReference<NPC> handle;
 
     @Override
-    public boolean despawn() {
-        if (getHandle() == null || !isSpawned()) throw new IllegalStateException("Already despawned");
+    public void despawn() {
+        Preconditions.checkState(isSpawned(), "Already despawned");
         getHandle().despawn();
         getHandle().destroy();
-        return true;
     }
 
     @Override
@@ -44,10 +47,11 @@ public class CitizensNPC implements net.techcable.npclib.NPC {
     }
 
     @Override
-    public boolean spawn(Location toSpawn) {
+    public void spawn(Location toSpawn) {
+        Preconditions.checkNotNull(toSpawn, "Null location");
         Preconditions.checkState(getHandle() != null, "This npc has been destroyed");
         Preconditions.checkState(!isSpawned(), "Already spawned");
-        return getHandle().spawn(toSpawn);
+        getHandle().spawn(toSpawn);
     }
 
     @Override

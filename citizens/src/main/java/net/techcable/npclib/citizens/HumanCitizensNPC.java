@@ -1,15 +1,17 @@
 package net.techcable.npclib.citizens;
 
-import com.google.common.base.Preconditions;
-import net.citizensnpcs.api.npc.NPC;
-import net.techcable.npclib.HumanNPC;
-import net.techcable.npclib.LivingNPC;
-import net.techcable.npclib.util.ProfileUtils;
-import org.bukkit.entity.Player;
-
 import java.util.UUID;
 
+import net.citizensnpcs.api.npc.NPC;
+import net.techcable.npclib.HumanNPC;
+import net.techcable.npclib.utils.uuid.UUIDUtils;
+
+import org.bukkit.entity.Player;
+
+import com.google.common.base.Preconditions;
+
 public class HumanCitizensNPC extends LivingCitizensNPC implements HumanNPC {
+
     public HumanCitizensNPC(NPC handle) {
         super(handle);
     }
@@ -18,7 +20,7 @@ public class HumanCitizensNPC extends LivingCitizensNPC implements HumanNPC {
     public UUID getSkin() {
         if (getHandle() == null) return null; //I'm too nice
         if (!getHandle().data().has(NPC.PLAYER_SKIN_UUID_METADATA)) return null;
-        return UUID.fromString((String)getHandle().data().get(NPC.PLAYER_SKIN_UUID_METADATA));
+        return UUID.fromString((String) getHandle().data().get(NPC.PLAYER_SKIN_UUID_METADATA));
     }
 
     @Override
@@ -34,9 +36,9 @@ public class HumanCitizensNPC extends LivingCitizensNPC implements HumanNPC {
     @Override
     public void setSkin(String skin) {
         if (skin == null) return;
-        ProfileUtils.PlayerProfile profile = ProfileUtils.lookup(skin);
-        if (profile == null) return;
-        setSkin(profile.getId());
+        UUID id = UUIDUtils.getId(skin);
+        if (id == null) return;
+        setSkin(id);
     }
 
     @Override
@@ -46,13 +48,16 @@ public class HumanCitizensNPC extends LivingCitizensNPC implements HumanNPC {
 
     }
 
+    public static final String REMOVE_PLAYER_LIST_META = "removefromplayerlist";
+
     @Override
     public void setShowInTabList(boolean show) {
-
+        Preconditions.checkState(isSpawned(), "Can not set shown in tablist if not spawned");
+        getHandle().data().set(REMOVE_PLAYER_LIST_META, !show);
     }
 
     @Override
     public boolean isShownInTabList() {
-        return false;
+        return !((Boolean) getHandle().data().get(REMOVE_PLAYER_LIST_META));
     }
 }

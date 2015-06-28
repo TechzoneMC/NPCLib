@@ -1,100 +1,123 @@
 package net.techcable.npclib.nms;
 
-import java.util.Collection;
-import java.util.Collections;
+import lombok.*;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 
+import net.techcable.npclib.HumanNPC;
+import net.techcable.npclib.LivingNPC;
 import net.techcable.npclib.NPC;
 import net.techcable.npclib.NPCRegistry;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
-import lombok.*;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableSet;
 
 @Getter
+@RequiredArgsConstructor
 public class NMSRegistry implements NPCRegistry, Listener {
 
-	public NMSRegistry(Plugin plugin) {
-		this.plugin = plugin;
-		Bukkit.getPluginManager().registerEvents(this, plugin);
-	}
-	
-	private static final EntityType[] SUPPORTED_TYPES = new EntityType[] {EntityType.PLAYER};
-	private final Plugin plugin;
-	private Map<UUID, NMSNPC> npcMap = new HashMap<>();
+    private final Plugin plugin;
 
-	@Override
-	public NPC createNPC(EntityType type, String name) {
-		return createNPC(type, UUID.randomUUID(), name);
-	}
+    public static final String METADATA_KEY = "NPCLib";
 
-	@Override
-	public NPC createNPC(EntityType type, UUID uuid, String name) {
-		if (!ArrayUtils.contains(SUPPORTED_TYPES, type)) throw new UnsupportedOperationException(type.toString() + " is an Unsupported Entity Type");
-		if (npcMap.containsKey(uuid)) throw new IllegalArgumentException("NPC with UUID " + uuid.toString() + " is already created");
-		NMSNPC npc = new NMSNPC(uuid, type, this);
-		npc.setName(name);
-		npcMap.put(uuid, npc);
-		return npc;
-	}
+    @Override
+    public HumanNPC createHumanNPC(String name) {
+        return createHumanNPC(UUID.randomUUID(), name);
+    }
 
-	@Override
-	public void deregister(NPC npc) {
-		if (!isRegistered(npc)) return;
-		if (npc.isSpawned()) throw new IllegalStateException("NPC is spawned; can't deregister");
-		getNpcMap().remove(npc.getUUID());
-	}
+    @Override
+    public HumanNPC createHumanNPC(UUID uuid, String name) {
+        Preconditions.checkNotNull(uuid, "Cant have null id");
+        Preconditions.checkNotNull(name, "Cant have null name");
+        NMSHumanNPC npc = new NMSHumanNPC(this, uuid, name);
+        npcs.put(uuid, npc);
+        return npc;
+    }
 
-	public boolean isRegistered(NPC npc) {
-		return npcMap.containsKey(npc.getUUID());
-	}
-	
-	@Override
-	public void deregisterAll() {
-		for (NPC npc : listNpcs()) {
-			deregister(npc);
-		}
-	}
+    @Getter(AccessLevel.NONE)
+    private final Map<UUID, NMSNPC> npcs = new HashMap<>();
 
-	@Override
-	public NPC getByUUID(UUID uuid) {
-		return getNpcMap().get(uuid);
-	}
+    @Override
+    public void deregister(NPC npc) {
+        Preconditions.checkState(!npc.isSpawned(), "NPC is Spawned");
+        npcs.remove(npc.getUUID());
+    }
 
-	@Override
-	public NPC getAsNPC(Entity entity) {
-		if (!isNPC(entity)) throw new IllegalStateException("Not an NPC");
-		return Util.getNMS().getAsNPC(entity);
-	}
-	
-	@EventHandler
-	public void onJoin(PlayerJoinEvent event) {
-		Util.getNMS().onJoin(event.getPlayer(), listNpcs());
-	}
+    @Override
+    public void deregisterAll() {
+        for (NPC npc : npcs.values()) {
+            deregister(npc);
+        }
+    }
 
-	@Override
-	public boolean isNPC(Entity entity) {
-		return Util.getNMS().getAsNPC(entity) != null;
-	}
+    @Override
+    public NPC getByUUID(UUID uuid) {
+        return npcs.get(uuid);
+    }
 
-	@Override
-	public Collection<? extends NPC> listNpcs() {
-		return Collections.unmodifiableCollection(getNpcMap().values());
-	}
+    @Override
+    public NPC getByName(String name) {
+        for (NPC npc : npcs.values()) {
+            if (npc instanceof LivingNPC) {
+                if (((LivingNPC) npc).getName().equals(name)) {
+                    return npc;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public NPC getAsNPC(Entity entity) {
+        List<MetadataValue> metadataList = entity.getMetadata(METADATA_KEY);
+        for (MetadataValue metadata : metadataList) {
+            if (metadata.value() instanceof NPC) {
+                return (NPC) metadata.value();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isNPC(Entity entity) {
+        return entity.hasMetadata(METADATA_KEY) && getAsNPC(entity) != null;
+    }
+
+    @Override
+    public ImmutableCollection<? extends NPC> listNpcs() {
+        return ImmutableSet.copyOf(npcs.values());
+    }
+
+    @Getter(lazy = true)
+    private final static NMS nms = makeNms();
+
+    private static NMS makeNms() {
+        try {
+            String packageName = Bukkit.getServer().getClass().getPackage().getName();
+            String version = packageName.substring(packageName.lastIndexOf(".") + 1);
+            Class<?> rawClass = Class.forName("net.techcable.npclib.nms.versions." + version + ".NMS");
+            Class<? extends NMS> nmsClass = rawClass.asSubclass(NMS.class);
+            Constructor<? extends NMS> constructor = nmsClass.getConstructor();
+            return constructor.newInstance();
+        } catch (ClassNotFoundException ex) {
+            throw new UnsupportedOperationException("Unsupported nms version", ex);
+        } catch (InvocationTargetException ex) {
+            throw Throwables.propagate(ex.getTargetException());
+        } catch (Exception ex) {
+            throw Throwables.propagate(ex);
+        }
+    }
 }

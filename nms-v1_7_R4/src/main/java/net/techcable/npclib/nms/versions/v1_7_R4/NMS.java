@@ -1,201 +1,117 @@
 package net.techcable.npclib.nms.versions.v1_7_R4;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
-import net.minecraft.server.v1_7_R4.ChunkCoordinates;
-import net.minecraft.server.v1_7_R4.Entity;
-import net.minecraft.server.v1_7_R4.EntityHuman;
-import net.minecraft.server.v1_7_R4.EntityLiving;
 import net.minecraft.server.v1_7_R4.EntityPlayer;
-import net.minecraft.server.v1_7_R4.IChatBaseComponent;
 import net.minecraft.server.v1_7_R4.MinecraftServer;
 import net.minecraft.server.v1_7_R4.Packet;
-import net.minecraft.server.v1_7_R4.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_7_R4.World;
 import net.minecraft.server.v1_7_R4.WorldServer;
-import net.minecraft.util.com.google.common.base.Function;
-import net.minecraft.util.com.google.common.base.Predicate;
-import net.minecraft.util.com.google.common.collect.Collections2;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
+import net.minecraft.util.com.mojang.authlib.properties.Property;
+import net.techcable.npclib.HumanNPC;
 import net.techcable.npclib.NPC;
-import net.techcable.npclib.nms.OptionalFeature;
-import net.techcable.npclib.util.ReflectUtil;
+import net.techcable.npclib.nms.IHumanNPCHook;
+import net.techcable.npclib.nms.versions.v1_7_R4.entity.EntityNPCPlayer;
+import net.techcable.npclib.utils.NPCLog;
+import net.techcable.npclib.utils.uuid.PlayerProfile;
+import net.techcable.npclib.utils.uuid.UUIDUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import org.json.simple.JSONObject;
 
 public class NMS implements net.techcable.npclib.nms.NMS {
-	
-	private static NMS instance;
-	public NMS() {
-		if (instance == null) instance = this;
-	}
-	
-	public static NMS getInstance() {
-		return instance;
-	}
-	
-    public void look(org.bukkit.entity.Entity entity, float pitch, float yaw) {
-        Entity handle = getHandle(entity);
-        if (handle == null) return;
-        handle.yaw = yaw;
-        setHeadYaw(getHandle(entity), yaw);
-        handle.pitch = pitch;
-    }
-    
-    /**
-     * This is copied from citizens
-     * I added comments giving mcp mappings
-     * @param entity
-     * @param yaw the
-     */
-    public static void setHeadYaw(Entity entity, float yaw) {
-        if (!(entity instanceof EntityLiving))
-            return;
-        EntityLiving handle = (EntityLiving) entity;
-        while (yaw < -180.0F) {
-            yaw += 360.0F;
-        }
 
-        while (yaw >= 180.0F) {
-            yaw -= 360.0F;
-        }
-        handle.aO = yaw; //MCP = roatationYawHead
-        if (!(handle instanceof EntityHuman))
-            handle.aM = yaw; //MCP = renderYawOffset
-        handle.aP = yaw; //MCP = prevRotationYawHead
+    private static NMS instance;
+
+    public NMS() {
+        if (instance == null) instance = this;
     }
-    
+
+    public static NMS getInstance() {
+        return instance;
+    }
+
+
     @Override
-    public Player spawnPlayer(Location toSpawn, String name, NPC npc) {
-    	EntityNPCPlayer player = new EntityNPCPlayer(npc, name, toSpawn);
-    	if (ProtocolHack.isProtocolHack()) {
-    		ProtocolHack.notifyOfSpawn(Bukkit.getOnlinePlayers(), player.getBukkitEntity());
-    	}
-    	WorldServer world = getHandle(toSpawn.getWorld());
-    	world.addEntity(player);
-    	look(player.getBukkitEntity(), toSpawn.getPitch(), toSpawn.getYaw());
-    	return player.getBukkitEntity();
-    }
-    
-    public static Entity getHandle(org.bukkit.entity.Entity bukkitEntity) {
-        if (!(bukkitEntity instanceof CraftEntity))
-            return null;
-        return ((CraftEntity)bukkitEntity).getHandle();
+    public IHumanNPCHook spawnHumanNPC(Location toSpawn, HumanNPC npc) {
+        return new HumanNPCHook(npc, toSpawn);
     }
 
-    public static EntityPlayer getHandle(Player bukkitPlayer) {
-    	if (!(bukkitPlayer instanceof CraftPlayer)) return null;
-    	return ((CraftPlayer)bukkitPlayer).getHandle();
+    @Override
+    public void onJoin(Player joined, Collection<? extends NPC> npcs) {
+        for (NPC npc : npcs) {
+            if (!(npc instanceof HumanNPC)) continue;
+            HumanNPCHook hook = getHandle((HumanNPC) npc);
+            if (hook == null) continue;
+            hook.onJoin(joined);
+        }
     }
 
-    public static EntityHuman getHandle(HumanEntity bukkitHuman) {
-    	if (!(bukkitHuman instanceof CraftHumanEntity)) return null;
-    	return ((CraftHumanEntity)bukkitHuman).getHandle();
+    // UTILS
+    public static final String NO_CRAFTBUKKIT_MSG = "Non-CraftBukkit implementations are unsupported";
+
+    public static EntityPlayer getHandle(Player player) {
+        if (!(player instanceof CraftPlayer)) throw new UnsupportedOperationException(NO_CRAFTBUKKIT_MSG);
+        return ((CraftPlayer) player).getHandle();
     }
-    
-    public static MinecraftServer getHandle(org.bukkit.Server bukkitServer) {
-    	if (bukkitServer instanceof CraftServer) {
-    		return ((CraftServer)bukkitServer).getServer();
-    	} else {
-    		return null;
-    	}
+
+    public static MinecraftServer getServer() {
+        Server server = Bukkit.getServer();
+        if (!(server instanceof CraftServer)) throw new UnsupportedOperationException(NO_CRAFTBUKKIT_MSG);
+        return ((CraftServer) server).getServer();
     }
-    
-    public static WorldServer getHandle(org.bukkit.World bukkitWorld) {
-    	if (bukkitWorld instanceof CraftWorld) {
-    		return ((CraftWorld)bukkitWorld).getHandle();
-    	} else {
-    		return null;
-    	}
+
+    public static WorldServer getHandle(World world) {
+        if (!(world instanceof CraftWorld)) throw new UnsupportedOperationException(NO_CRAFTBUKKIT_MSG);
+        return ((CraftWorld) world).getHandle();
     }
-	
-	public static MinecraftServer getServer() {
-		return getHandle(Bukkit.getServer());
-	}
 
-	@Override
-	public NPC getAsNPC(org.bukkit.entity.Entity entity) {
-		if (getHandle(entity) instanceof EntityNPCPlayer) {
-			EntityNPCPlayer player = (EntityNPCPlayer) getHandle(entity);
-			return player.getNpc();
-		} else {
-			return null;
-		}
-	}
+    public static HumanNPCHook getHandle(HumanNPC npc) {
+        EntityPlayer player = getHandle(npc.getEntity());
+        if (player instanceof EntityNPCPlayer) return null;
+        return ((EntityNPCPlayer) player).getHook();
+    }
 
-	public static final int[] UPDATE_ALL_SLOTS = new int[] {0, 1, 2, 3, 4};
-	@Override
-	public void notifyOfEquipmentChange(Player[] toNotify, Player rawNpc, int... slots) {
-	    EntityPlayer npc = getHandle(rawNpc);
-	    slots = slots.length == 0 ? UPDATE_ALL_SLOTS : slots;
-	    List<Packet> packets = new ArrayList<>();
-	    for (int slot : slots) {
-	        packets.add(new PacketPlayOutEntityEquipment(npc.getId(), slot, npc.getEquipment(slot)));
-	    }
-	    sendPacketsTo(toNotify, packets.toArray(new Packet[packets.size()]));
-	}
-	
-	public void sendPacketsTo(Player[] recipients, Packet... packets) {
-	    EntityPlayer[] nmsToSend = new EntityPlayer[recipients.length];
-	    for (int i = 0; i < recipients.length; i++) {
-	        nmsToSend[i] = getHandle(recipients[i]);
-	    }
-		for (EntityPlayer recipient : nmsToSend) {
-			if (recipient == null) continue;
-			for (Packet packet : packets) {
-			    if (packet == null) continue;
-			    recipient.playerConnection.sendPacket(packet);
-			}
-		}
-	}
+    public static void sendToAll(Packet packet) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            getHandle(p).playerConnection.sendPacket(packet);
+        }
+    }
 
-	@Override
-	public boolean isSupported(OptionalFeature feature) {
-		switch (feature) {
-			case SKINS :
-				return true;
-			default :
-				return false;
-		}
-	}
-
-	@Override
-	public void onJoin(Player joined, Collection<? extends NPC> npcs) {
-		if (ProtocolHack.isProtocolHack()) {
-			npcs = Collections2.filter(npcs, new Predicate<NPC>() {
-				@Override
-				public boolean apply(NPC arg0) {
-					return arg0.isSpawned() && arg0 instanceof Player;
-				}
-			});
-			Collection<? extends Player> npcEntities = Collections2.transform(npcs, new Function<NPC, Player>() {
-				@Override
-				public Player apply(NPC npc) {
-					return (Player) npc.getEntity();
-				}
-			});
-			ProtocolHack.notifyOfSpawn(new Player[] {joined}, npcEntities.toArray(new Player[npcEntities.size()]));
-		}
-	}
-
-	@Override
-	public void onDespawn(NPC npc) {
-		if (ProtocolHack.isProtocolHack()) {
-			ProtocolHack.notifyOfDespawn(Bukkit.getOnlinePlayers(), (Player)npc.getEntity());
-		}
-	}
+    public static void setSkin(GameProfile profile, UUID skinId) {
+        profile.getProperties().get("textures").clear();
+        if (skinId == null) return;
+        if (Bukkit.getPlayer(skinId) != null) { // Avoid a lookup if the player is online :)
+            EntityPlayer playerWithSkin = getHandle(Bukkit.getPlayer(skinId));
+            Collection<Property> textureProperties = playerWithSkin.getProfile().getProperties().get("textures");
+            profile.getProperties().get("textures").addAll(textureProperties);
+            return;
+        }
+        PlayerProfile skinProfile = UUIDUtils.getLookup().lookup(skinId);
+        if (skinProfile == null) {
+            NPCLog.warn("Unable to get skin for uuid %s", skinId);
+            return;
+        }
+        if (skinProfile.getProperties() == null || skinProfile.getProperties().isEmpty()) return;
+        for (Object element : skinProfile.getProperties()) {
+            if (!(element instanceof JSONObject)) continue;
+            JSONObject object = (JSONObject) element;
+            if (!(object.get("name") instanceof String)) continue;
+            String name = (String) object.get("name");
+            if (!"textures".equals(name)) continue;
+            if (!(object.get("value") instanceof String)) continue;
+            String signature = object.get("signature") instanceof String ? (String) object.get("signature") : null;
+            String value = (String) object.get("value");
+            Property property = new Property(name, value, signature);
+            profile.getProperties().put(name, property);
+        }
+    }
 }
