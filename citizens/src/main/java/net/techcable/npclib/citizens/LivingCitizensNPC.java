@@ -35,7 +35,6 @@ public class LivingCitizensNPC extends CitizensNPC implements LivingNPC {
 
     @Override
     public boolean isAbleToWalk() {
-        Preconditions.checkState(getHandle() != null, "NPC has been destroyed");
         return isSpawned();
     }
 
@@ -47,7 +46,6 @@ public class LivingCitizensNPC extends CitizensNPC implements LivingNPC {
 
     @Override
     public LivingEntity getEntity() {
-        if (super.getEntity() == null) return null;
         return (LivingEntity) super.getEntity();
     }
 }

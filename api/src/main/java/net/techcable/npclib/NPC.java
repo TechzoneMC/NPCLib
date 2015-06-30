@@ -2,6 +2,9 @@ package net.techcable.npclib;
 
 import java.util.UUID;
 
+import net.techcable.npclib.ai.AIEnvironment;
+import net.techcable.npclib.ai.AITask;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
@@ -73,4 +76,22 @@ public interface NPC {
      * @return The protected status of the NPC
      */
     public boolean isProtected();
+
+    /**
+     * Add the specified task to the npc
+     *
+     * @param task the task to add
+     */
+    public void addTask(AITask task);
+
+    /**
+     * Get the npc's ai environment
+     * <p>
+     * The ai environment manages the npc's ai
+     * </p>
+     *
+     * @return the npc's ai environment
+     */
+    public AIEnvironment getAIEnvironment();
+
 }

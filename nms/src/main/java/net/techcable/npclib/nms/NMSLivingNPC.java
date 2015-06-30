@@ -7,6 +7,8 @@ import net.techcable.npclib.LivingNPC;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
+import com.google.common.base.Preconditions;
+
 public abstract class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements LivingNPC {
 
     public NMSLivingNPC(NMSRegistry registry, UUID id, String name) {
@@ -25,12 +27,14 @@ public abstract class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> i
 
     @Override
     public void walkTo(Location l) {
-        throw new UnsupportedOperationException("Unsupported");
+        Preconditions.checkNotNull(l, "Location can't be null");
+        Preconditions.checkArgument(l.getWorld().equals(getEntity().getWorld()), "Can't walk to a location in a different world");
+        getHook().navigateTo(l);
     }
 
     @Override
     public boolean isAbleToWalk() {
-        return false;
+        return isSpawned();
     }
 
     @Override

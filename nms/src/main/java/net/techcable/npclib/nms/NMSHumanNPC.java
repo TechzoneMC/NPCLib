@@ -1,8 +1,12 @@
 package net.techcable.npclib.nms;
 
+import lombok.*;
+
 import java.util.UUID;
 
 import net.techcable.npclib.HumanNPC;
+import net.techcable.npclib.ai.AITask;
+import net.techcable.npclib.nms.ai.NMSAIEnvironment;
 import net.techcable.npclib.utils.uuid.UUIDUtils;
 
 import org.bukkit.Location;
@@ -62,4 +66,12 @@ public class NMSHumanNPC extends NMSLivingNPC<IHumanNPCHook> implements HumanNPC
     public Player getEntity() {
         return (Player) getHook().getEntity();
     }
+
+    @Override
+    public void addTask(AITask task) {
+        getAIEnvironment().addTask(task);
+    }
+
+    @Getter(lazy = true)
+    private final NMSAIEnvironment aIEnvironment = new NMSAIEnvironment(this);
 }

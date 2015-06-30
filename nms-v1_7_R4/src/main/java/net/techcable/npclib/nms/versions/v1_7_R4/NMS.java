@@ -1,8 +1,10 @@
 package net.techcable.npclib.nms.versions.v1_7_R4;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
+import net.minecraft.server.v1_7_R4.EntityLiving;
 import net.minecraft.server.v1_7_R4.EntityPlayer;
 import net.minecraft.server.v1_7_R4.MinecraftServer;
 import net.minecraft.server.v1_7_R4.Packet;
@@ -23,7 +25,9 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
@@ -63,6 +67,11 @@ public class NMS implements net.techcable.npclib.nms.NMS {
         return ((CraftPlayer) player).getHandle();
     }
 
+    public static EntityLiving getHandle(LivingEntity player) {
+        if (!(player instanceof CraftLivingEntity)) throw new UnsupportedOperationException(NO_CRAFTBUKKIT_MSG);
+        return ((CraftLivingEntity) player).getHandle();
+    }
+
     public static MinecraftServer getServer() {
         Server server = Bukkit.getServer();
         if (!(server instanceof CraftServer)) throw new UnsupportedOperationException(NO_CRAFTBUKKIT_MSG);
@@ -81,8 +90,8 @@ public class NMS implements net.techcable.npclib.nms.NMS {
     }
 
     public static void sendToAll(Packet packet) {
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            getHandle(p).playerConnection.sendPacket(packet);
+        for (EntityPlayer p : (List<EntityPlayer>) MinecraftServer.getServer().getPlayerList().players) {
+            p.playerConnection.sendPacket(packet);
         }
     }
 

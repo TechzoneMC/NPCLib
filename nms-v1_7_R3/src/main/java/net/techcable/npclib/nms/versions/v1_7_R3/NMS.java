@@ -3,6 +3,7 @@ package net.techcable.npclib.nms.versions.v1_7_R3;
 import java.util.Collection;
 import java.util.UUID;
 
+import net.minecraft.server.v1_7_R3.EntityLiving;
 import net.minecraft.server.v1_7_R3.EntityPlayer;
 import net.minecraft.server.v1_7_R3.MinecraftServer;
 import net.minecraft.server.v1_7_R3.Packet;
@@ -10,6 +11,7 @@ import net.minecraft.server.v1_7_R3.WorldServer;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.properties.Property;
 import net.techcable.npclib.HumanNPC;
+import net.techcable.npclib.LivingNPC;
 import net.techcable.npclib.NPC;
 import net.techcable.npclib.nms.IHumanNPCHook;
 import net.techcable.npclib.nms.versions.v1_7_R3.entity.EntityNPCPlayer;
@@ -23,7 +25,9 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_7_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R3.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
@@ -63,6 +67,11 @@ public class NMS implements net.techcable.npclib.nms.NMS {
         return ((CraftPlayer) player).getHandle();
     }
 
+    public static EntityLiving getHandle(LivingEntity entity) {
+        if (!(entity instanceof CraftLivingEntity)) throw new UnsupportedOperationException(NO_CRAFTBUKKIT_MSG);
+        return ((CraftLivingEntity) entity).getHandle();
+    }
+
     public static MinecraftServer getServer() {
         Server server = Bukkit.getServer();
         if (!(server instanceof CraftServer)) throw new UnsupportedOperationException(NO_CRAFTBUKKIT_MSG);
@@ -78,6 +87,11 @@ public class NMS implements net.techcable.npclib.nms.NMS {
         EntityPlayer player = getHandle(npc.getEntity());
         if (player instanceof EntityNPCPlayer) return null;
         return ((EntityNPCPlayer) player).getHook();
+    }
+
+    public static LivingNPCHook getHandle(LivingNPC npc) {
+        if (getHandle((HumanNPC) npc) != null) return getHandle((HumanNPC) npc);
+        return null;
     }
 
     public static void sendToAll(Packet packet) {

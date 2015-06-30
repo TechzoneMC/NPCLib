@@ -1,10 +1,14 @@
 package net.techcable.npclib.citizens;
 
 
+import lombok.*;
+
 import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.techcable.npclib.ai.AITask;
+import net.techcable.npclib.citizens.ai.CitizensAIEnvironment;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -65,4 +69,12 @@ public class CitizensNPC implements net.techcable.npclib.NPC {
         if (getHandle() == null) return false;
         return getHandle().isProtected();
     }
+
+    @Override
+    public void addTask(AITask task) {
+        getAIEnvironment().addTask(task);
+    }
+
+    @Getter(lazy = true)
+    private final CitizensAIEnvironment aIEnvironment = new CitizensAIEnvironment(this);
 }

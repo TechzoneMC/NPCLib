@@ -42,9 +42,9 @@ public interface LivingNPC extends NPC {
     public void faceLocation(Location toFace);
 
     /**
-     * Returns if the implementation of the npc is able to walk
+     * Returns if the npc is an a condition to walk
      *
-     * @return if the implementation of the npc is able to walk
+     * @return if the npc is an a condition to walk
      */
     public boolean isAbleToWalk();
 
@@ -53,7 +53,7 @@ public interface LivingNPC extends NPC {
      *
      * @param l the location to walk to
      *
-     * @throws java.lang.UnsupportedOperationException if unsupported
+     * @throws java.lang.IllegalStateException if not in a condition to walk
      */
     public void walkTo(Location l);
 

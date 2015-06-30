@@ -11,7 +11,9 @@ import net.minecraft.server.v1_7_R4.Packet;
 import net.minecraft.server.v1_7_R4.PacketPlayOutEntityEquipment;
 import net.techcable.npclib.LivingNPC;
 import net.techcable.npclib.nms.ILivingNPCHook;
+import net.techcable.npclib.nms.versions.v1_7_R4.ai.NPCPath;
 
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
 public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
@@ -72,6 +74,15 @@ public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
     private static boolean equals(ItemStack first, ItemStack second) {
         if (first == null) return second == null;
         return first.equals(second);
+    }
+
+    public static final double DEFAULT_SPEED = 0.2;
+    public static final int DEFAULT_RANGE = 45;
+
+    @Override
+    public void navigateTo(Location l) {
+        NPCPath path = NPCPath.find(getNpc(), l, DEFAULT_RANGE, DEFAULT_SPEED);
+        getNpc().addTask(path);
     }
 
     public EntityLiving getNmsEntity() {

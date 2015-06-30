@@ -1,5 +1,7 @@
 package net.techcable.npclib.nms.versions.v1_8_R3;
 
+import lombok.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,9 +11,13 @@ import net.minecraft.server.v1_8_R3.ItemStack;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_8_R3.Pathfinder;
+import net.minecraft.server.v1_8_R3.PathfinderNormal;
 import net.techcable.npclib.LivingNPC;
 import net.techcable.npclib.nms.ILivingNPCHook;
+import net.techcable.npclib.nms.versions.v1_8_R3.ai.NPCPath;
 
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
 public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
@@ -41,6 +47,18 @@ public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
         }
         return yaw;
     }
+
+    public static final double DEFAULT_SPEED = 0.2;
+    public static final int DEFAULT_RANGE = 45;
+
+    @Override
+    public void navigateTo(Location l) {
+        NPCPath path = NPCPath.find(getNpc(), l, DEFAULT_RANGE, DEFAULT_SPEED);
+        getNpc().addTask(path);
+    }
+
+    @Getter(lazy = true)
+    private final Pathfinder pathfinder = new Pathfinder(new PathfinderNormal());
 
     @Override
     public void onTick() {
