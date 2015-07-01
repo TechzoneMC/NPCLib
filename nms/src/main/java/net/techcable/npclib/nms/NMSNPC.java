@@ -21,7 +21,7 @@ public abstract class NMSNPC<T extends INPCHook> extends BukkitRunnable implemen
     private final UUID id;
     private String name;
 
-    private boolean spawned;
+    private NPCState state = NPCState.NOT_SPAWNED;
 
     public NMSNPC(NMSRegistry registry, UUID id, String name) {
         this.registry = registry;
@@ -37,7 +37,7 @@ public abstract class NMSNPC<T extends INPCHook> extends BukkitRunnable implemen
         hook.getEntity().remove();
         hook.onDespawn();
         hook = null;
-        spawned = false;
+        state = NPCState.DESTROYED;
         cancel();
         getRegistry().deregister(this);
     }
@@ -54,17 +54,22 @@ public abstract class NMSNPC<T extends INPCHook> extends BukkitRunnable implemen
 
     @Override
     public boolean isSpawned() {
-        return hook != null && spawned;
+        return hook != null && state == NPCState.SPAWNED;
+    }
+
+    @Override
+    public boolean isDestroyed() {
+        return !isSpawned() && state == NPCState.DESTROYED;
     }
 
     @Override
     public void spawn(Location toSpawn) {
         Preconditions.checkNotNull(toSpawn, "Location may not be null");
-        Preconditions.checkState(hook != null, "NPC has been destroyed");
+        Preconditions.checkState(state == NPCState.DESTROYED, "NPC has been destroyed");
         Preconditions.checkState(!isSpawned(), "NPC is already spawned");
         hook = doSpawn(toSpawn);
         hook.getEntity().setMetadata(NMSRegistry.METADATA_KEY, new FixedMetadataValue(getRegistry().getPlugin(), this));
-        spawned = true;
+        state = NPCState.SPAWNED;
     }
 
     protected abstract T doSpawn(Location toSpawn);
@@ -84,5 +89,11 @@ public abstract class NMSNPC<T extends INPCHook> extends BukkitRunnable implemen
 
     @Override
     public void run() {
+    }
+
+    private static enum NPCState {
+        NOT_SPAWNED,
+        SPAWNED,
+        DESTROYED;
     }
 }

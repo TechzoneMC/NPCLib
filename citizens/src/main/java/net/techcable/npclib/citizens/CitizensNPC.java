@@ -27,11 +27,14 @@ public class CitizensNPC implements net.techcable.npclib.NPC {
 
     private final WeakReference<NPC> handle;
 
+    private boolean destroyed;
+
     @Override
     public void despawn() {
         Preconditions.checkState(isSpawned(), "Already despawned");
         getHandle().despawn();
         getHandle().destroy();
+        destroyed = true;
     }
 
     @Override
@@ -48,6 +51,11 @@ public class CitizensNPC implements net.techcable.npclib.NPC {
     @Override
     public boolean isSpawned() {
         return getHandle() != null && getHandle().isSpawned();
+    }
+
+    @Override
+    public boolean isDestroyed() {
+        return getHandle() == null || destroyed;
     }
 
     @Override

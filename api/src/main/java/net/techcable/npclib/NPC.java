@@ -44,11 +44,21 @@ public interface NPC {
     public UUID getUUID();
 
     /**
-     * Returns weather the npc is spawned
+     * Returns whether the npc is spawned
      *
      * @return true if the npc is spawned
      */
     public boolean isSpawned();
+
+    /**
+     * Returns whether the npc has been destroyed
+     * <p>
+     * NPCs that are destroyed can never be respawned
+     * </p>
+     *
+     * @return true if the npc has been destroyed
+     */
+    public boolean isDestroyed();
 
     /**
      * Spawn this npc
