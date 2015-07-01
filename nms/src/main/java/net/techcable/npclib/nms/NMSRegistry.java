@@ -16,6 +16,7 @@ import net.techcable.npclib.NPCRegistry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.Listener;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -43,6 +44,21 @@ public class NMSRegistry implements NPCRegistry, Listener {
         Preconditions.checkNotNull(uuid, "Cant have null id");
         Preconditions.checkNotNull(name, "Cant have null name");
         NMSHumanNPC npc = new NMSHumanNPC(this, uuid, name);
+        npcs.put(uuid, npc);
+        return npc;
+    }
+
+    @Override
+    public LivingNPC createLivingNPC(String name, EntityType type) {
+        return createLivingNPC(UUID.randomUUID(), name, type);
+    }
+
+    @Override
+    public LivingNPC createLivingNPC(UUID uuid, String name, EntityType type) {
+        Preconditions.checkNotNull(uuid, "Cant have null id");
+        Preconditions.checkNotNull(name, "Cant have null name");
+        if (type == EntityType.PLAYER) return createHumanNPC(uuid, name);
+        NMSLivingNPC npc = new NMSLivingNPC(this, uuid, name, type);
         npcs.put(uuid, npc);
         return npc;
     }

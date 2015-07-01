@@ -12,8 +12,10 @@ import net.minecraft.server.v1_7_R4.WorldServer;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.properties.Property;
 import net.techcable.npclib.HumanNPC;
+import net.techcable.npclib.LivingNPC;
 import net.techcable.npclib.NPC;
 import net.techcable.npclib.nms.IHumanNPCHook;
+import net.techcable.npclib.nms.ILivingNPCHook;
 import net.techcable.npclib.nms.versions.v1_7_R4.entity.EntityNPCPlayer;
 import net.techcable.npclib.utils.NPCLog;
 import net.techcable.npclib.utils.uuid.PlayerProfile;
@@ -27,6 +29,7 @@ import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
@@ -47,6 +50,11 @@ public class NMS implements net.techcable.npclib.nms.NMS {
     @Override
     public IHumanNPCHook spawnHumanNPC(Location toSpawn, HumanNPC npc) {
         return new HumanNPCHook(npc, toSpawn);
+    }
+
+    @Override
+    public ILivingNPCHook spawnLivingNPC(Location toSpawn, LivingNPC npc, EntityType type) {
+        return new LivingNPCHook(npc, toSpawn, type);
     }
 
     @Override

@@ -14,8 +14,11 @@ import net.techcable.npclib.HumanNPC;
 import net.techcable.npclib.LivingNPC;
 import net.techcable.npclib.NPC;
 import net.techcable.npclib.nms.IHumanNPCHook;
+import net.techcable.npclib.nms.ILivingNPCHook;
+import net.techcable.npclib.nms.versions.v1_7_R3.LivingNPCHook.LivingHookable;
 import net.techcable.npclib.nms.versions.v1_7_R3.entity.EntityNPCPlayer;
 import net.techcable.npclib.utils.NPCLog;
+import net.techcable.npclib.utils.Reflection;
 import net.techcable.npclib.utils.uuid.PlayerProfile;
 import net.techcable.npclib.utils.uuid.UUIDUtils;
 
@@ -27,6 +30,7 @@ import org.bukkit.craftbukkit.v1_7_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_7_R3.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
@@ -47,6 +51,11 @@ public class NMS implements net.techcable.npclib.nms.NMS {
     @Override
     public IHumanNPCHook spawnHumanNPC(Location toSpawn, HumanNPC npc) {
         return new HumanNPCHook(npc, toSpawn);
+    }
+
+    @Override
+    public ILivingNPCHook spawnLivingNPC(Location toSpawn, LivingNPC npc, EntityType type) {
+        return new LivingNPCHook(npc, toSpawn, type);
     }
 
     @Override
@@ -89,8 +98,12 @@ public class NMS implements net.techcable.npclib.nms.NMS {
         return ((EntityNPCPlayer) player).getHook();
     }
 
-    public static LivingNPCHook getHandle(LivingNPC npc) {
+    public static LivingNPCHook getHook(LivingNPC npc) {
         if (getHandle((HumanNPC) npc) != null) return getHandle((HumanNPC) npc);
+        EntityLiving entity = getHandle(npc.getEntity());
+        if (entity instanceof LivingHookable) {
+            return ((LivingHookable)entity).getHook();
+        }
         return null;
     }
 

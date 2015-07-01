@@ -10,12 +10,13 @@ import net.techcable.npclib.nms.ai.NMSAIEnvironment;
 import net.techcable.npclib.utils.uuid.UUIDUtils;
 
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 public class NMSHumanNPC extends NMSLivingNPC<IHumanNPCHook> implements HumanNPC {
 
     public NMSHumanNPC(NMSRegistry registry, UUID id, String name) {
-        super(registry, id, name);
+        super(registry, id, name, EntityType.PLAYER);
     }
 
     @Override
@@ -66,12 +67,4 @@ public class NMSHumanNPC extends NMSLivingNPC<IHumanNPCHook> implements HumanNPC
     public Player getEntity() {
         return (Player) getHook().getEntity();
     }
-
-    @Override
-    public void addTask(AITask task) {
-        getAIEnvironment().addTask(task);
-    }
-
-    @Getter(lazy = true)
-    private final NMSAIEnvironment aIEnvironment = new NMSAIEnvironment(this);
 }

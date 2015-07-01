@@ -3,6 +3,7 @@ package net.techcable.npclib;
 import java.util.UUID;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
 
 import com.google.common.collect.ImmutableCollection;
@@ -27,6 +28,35 @@ public interface NPCRegistry {
      * @return the new npc
      */
     public HumanNPC createHumanNPC(UUID uuid, String name);
+
+    /**
+     * Creates a despawned npc of the specified type
+     * <p>
+     * Human npcs are <b>not</b> supported by this method
+     * </p>
+     *
+     * @throws java.lang.IllegalArgumentException if the entity type isn't a living entity
+     * @throws java.lang.UnsupportedOperationException if the entity type is unsupported
+     * @param name the name of the npc
+     * @param type use
+     * @return the new npc
+     */
+    public LivingNPC createLivingNPC(String name, EntityType type);
+
+    /**
+     * Creates a despawned npc of the specified type
+     * <p>
+     * Human npcs are supported by this method
+     * </p>
+     *
+     * @throws java.lang.IllegalArgumentException if the entity type isn't a living entity
+     * @throws java.lang.UnsupportedOperationException if the entity type is unsupported
+     * @param uuid the uuid of the new npcs
+     * @param name the name of the npc
+     * @param type the type of the npc to spawn
+     * @return the new npc
+     */
+    public LivingNPC createLivingNPC(UUID uuid, String name, EntityType type);
 
     /**
      * Removes this npc from the registry

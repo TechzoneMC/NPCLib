@@ -1,18 +1,26 @@
 package net.techcable.npclib.nms;
 
+import lombok.*;
+
 import java.util.UUID;
 
 import net.techcable.npclib.LivingNPC;
+import net.techcable.npclib.ai.AIEnvironment;
+import net.techcable.npclib.ai.AITask;
+import net.techcable.npclib.nms.ai.NMSAIEnvironment;
 
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 import com.google.common.base.Preconditions;
 
-public abstract class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements LivingNPC {
+public class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements LivingNPC {
+    private final EntityType entityType;
 
-    public NMSLivingNPC(NMSRegistry registry, UUID id, String name) {
+    public NMSLivingNPC(NMSRegistry registry, UUID id, String name, EntityType entityType) {
         super(registry, id, name);
+        this.entityType = entityType;
     }
 
     @Override
@@ -23,6 +31,12 @@ public abstract class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> i
     @Override
     public LivingEntity getEntity() {
         return (LivingEntity) super.getEntity();
+    }
+
+    @Override
+    @SuppressWarnings("uncheked")
+    protected T doSpawn(Location toSpawn) {
+        return (T) NMSRegistry.getNms().spawnLivingNPC(toSpawn, this, entityType);
     }
 
     @Override
@@ -62,4 +76,13 @@ public abstract class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> i
         if (!isSpawned()) return;
         getHook().onTick();
     }
+
+
+    @Override
+    public void addTask(AITask task) {
+        getAIEnvironment().addTask(task);
+    }
+    
+    @Getter(lazy = true)
+    private final NMSAIEnvironment aIEnvironment = new NMSAIEnvironment(this);
 }

@@ -13,13 +13,13 @@ import net.techcable.npclib.nms.versions.v1_7_R3.entity.EntityNPCPlayer;
 import net.techcable.npclib.utils.Reflection;
 
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
 
     public HumanNPCHook(HumanNPC npc, Location toSpawn) {
-        super(npc);
-        this.nmsEntity = spawn(npc, toSpawn);
+        super(npc, toSpawn, EntityType.PLAYER);
         getNmsEntity().setHook(this);
         showInTablist();
     }
@@ -73,8 +73,7 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
         Location lastLocation = getEntity().getLocation();
         boolean wasShown = shownInTabList;
         hideFromTablist();
-        getNmsEntity().setHook(null);
-        this.nmsEntity = spawn(getNpc(), lastLocation);
+        this.nmsEntity = spawn(lastLocation, EntityType.PLAYER);
         getNmsEntity().setHook(this);
         showInTablist();
         if (!wasShown) hideFromTablist();
@@ -86,8 +85,11 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
         hideFromTablist();
     }
 
-    private static EntityNPCPlayer spawn(HumanNPC npc, Location toSpawn) {
-        return new EntityNPCPlayer(npc, toSpawn);
+    @Override
+    protected EntityNPCPlayer spawn(Location toSpawn, EntityType type) {
+        EntityNPCPlayer player = new EntityNPCPlayer(getNpc(), toSpawn);
+        player.setHook(null);
+        return player;
     }
 
     public void onJoin(Player joined) {

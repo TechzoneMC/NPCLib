@@ -14,13 +14,13 @@ import net.techcable.npclib.nms.versions.v1_7_R4.entity.EntityNPCPlayer;
 import net.techcable.npclib.utils.Reflection;
 
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
 
     public HumanNPCHook(HumanNPC npc, Location toSpawn) {
-        super(npc);
-        this.nmsEntity = spawn(npc, toSpawn);
+        super(npc, toSpawn, EntityType.PLAYER);
         getNmsEntity().setHook(this);
         showInTablist();
     }

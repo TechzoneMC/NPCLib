@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.tree.Precondition;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.SimpleNPCDataStore;
@@ -24,6 +25,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 
@@ -55,6 +57,21 @@ public class CitizensNPCRegistry implements net.techcable.npclib.NPCRegistry {
     public HumanNPC createHumanNPC(UUID uuid, String name) {
         net.citizensnpcs.api.npc.NPC citizens = getBacking().createNPC(EntityType.PLAYER, uuid, idTracker.getNextId(), name);
         HumanNPC npc = new HumanCitizensNPC(citizens);
+        npcMap.put(npc.getUUID(), npc);
+        return npc;
+    }
+
+    @Override
+    public LivingNPC createLivingNPC(String name, EntityType type) {
+        return createLivingNPC(UUID.randomUUID(), name, type);
+    }
+
+    @Override
+    public LivingNPC createLivingNPC(UUID uuid, String name, EntityType type) {
+        if (type == EntityType.PLAYER) return createHumanNPC(uuid, name);
+        Preconditions.checkArgument(type.isAlive(), "This npc type isn't alive");
+        net.citizensnpcs.api.npc.NPC citizens = getBacking().createNPC(type, uuid, idTracker.getNextId(), name);
+        LivingNPC npc = new LivingCitizensNPC(citizens);
         npcMap.put(npc.getUUID(), npc);
         return npc;
     }
