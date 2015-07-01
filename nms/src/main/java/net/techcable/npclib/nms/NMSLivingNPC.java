@@ -59,6 +59,7 @@ public abstract class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> i
     @Override
     public void run() {
         super.run();
+        if (!isSpawned()) return;
         getHook().onTick();
     }
 }
