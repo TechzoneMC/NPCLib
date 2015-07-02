@@ -29,7 +29,6 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
 
     @Override
     public void setSkin(UUID id) {
-        boolean wasHidden = shownInTabList;
         NMS.setSkin(getNmsEntity().getProfile(), id);
         refreshPlayerInfo();
     }
@@ -88,25 +87,15 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
         refreshPlayerInfo();
     }
 
-    public void respawn() {
-        Location lastLocation = getEntity().getLocation();
-        boolean wasShown = shownInTabList;
-        hideFromTablist();
-        getNmsEntity().setHook(null);
-        this.nmsEntity = spawn(getNpc(), lastLocation);
-        getNmsEntity().setHook(this);
-        showInTablist();
-        if (!wasShown) hideFromTablist();
-    }
-
     @Override
     public void onDespawn() {
         super.onDespawn();
         hideFromTablist();
     }
 
-    private static EntityNPCPlayer spawn(HumanNPC npc, Location toSpawn) {
-        return new EntityNPCPlayer(npc, toSpawn);
+    @Override
+    protected EntityNPCPlayer spawn(Location toSpawn, EntityType type) {
+        return new EntityNPCPlayer(getNpc(), toSpawn);
     }
 
     public void onJoin(Player joined) {

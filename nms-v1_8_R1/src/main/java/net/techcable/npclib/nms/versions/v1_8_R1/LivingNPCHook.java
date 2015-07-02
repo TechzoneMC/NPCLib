@@ -25,8 +25,10 @@ import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCCow;
 import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCCreeper;
 import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCEnderDragon;
 import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCEnderman;
+import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCEndermite;
 import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCGhast;
 import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCGiant;
+import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCGuardian;
 import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCHorse;
 import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCIronGolem;
 import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCMagmaCube;
@@ -34,6 +36,7 @@ import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCMushroom
 import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCOcelot;
 import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCPig;
 import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCPigZombie;
+import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCRabbit;
 import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCSheep;
 import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCSilverfish;
 import net.techcable.npclib.nms.versions.v1_8_R1.entity.living.EntityNPCSlime;
@@ -157,18 +160,14 @@ public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
                 return new EntityNPCEnderDragon(world, getNpc(), this);
             case ENDERMAN:
                 return new EntityNPCEnderman(world, getNpc(), this);
-            /*
             case ENDERMITE :
-                return new EntityNPCBat(world, getNpc(), this);
-                */
+                return new EntityNPCEndermite(world, getNpc(), this);
             case GHAST:
                 return new EntityNPCGhast(world, getNpc(), this);
             case GIANT:
                 return new EntityNPCGiant(world, getNpc(), this);
-            /*
             case GUARDIAN:
-                return new EntityNPCBat(world, getNpc(), this);
-             */
+                return new EntityNPCGuardian(world, getNpc(), this);
             case HORSE:
                 return new EntityNPCHorse(world, getNpc(), this);
             case IRON_GOLEM:
@@ -183,10 +182,8 @@ public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
                 return new EntityNPCPig(world, getNpc(), this);
             case PIG_ZOMBIE:
                 return new EntityNPCPigZombie(world, getNpc(), this);
-            /*
             case RABBIT :
-                return new EntityNPCBat(world, getNpc(), this);
-                */
+                return new EntityNPCRabbit(world, getNpc(), this);
             case SHEEP:
                 return new EntityNPCSheep(world, getNpc(), this);
             case SILVERFISH:

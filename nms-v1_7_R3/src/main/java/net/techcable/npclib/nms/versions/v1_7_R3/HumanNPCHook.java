@@ -16,6 +16,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import com.google.common.base.Preconditions;
+
 public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
 
     public HumanNPCHook(HumanNPC npc, Location toSpawn) {
@@ -26,7 +28,6 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
 
     @Override
     public void setSkin(UUID id) {
-        boolean wasHidden = shownInTabList;
         NMS.setSkin(getNmsEntity().getProfile(), id);
         respawn();
     }
@@ -73,6 +74,8 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
         Location lastLocation = getEntity().getLocation();
         boolean wasShown = shownInTabList;
         hideFromTablist();
+        getNmsEntity().setHook(null);
+        getNmsEntity().dead = true; // Kill old entity
         this.nmsEntity = spawn(lastLocation, EntityType.PLAYER);
         getNmsEntity().setHook(this);
         showInTablist();
@@ -87,9 +90,8 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
 
     @Override
     protected EntityNPCPlayer spawn(Location toSpawn, EntityType type) {
-        EntityNPCPlayer player = new EntityNPCPlayer(getNpc(), toSpawn);
-        player.setHook(null);
-        return player;
+        Preconditions.checkArgument(type == EntityType.PLAYER, "HumanNPCHook can only handle players");
+        return new EntityNPCPlayer(getNpc(), toSpawn);
     }
 
     public void onJoin(Player joined) {
