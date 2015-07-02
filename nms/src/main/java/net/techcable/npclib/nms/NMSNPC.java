@@ -32,7 +32,7 @@ public abstract class NMSNPC<T extends INPCHook> extends BukkitRunnable implemen
 
     @Override
     public void despawn() {
-        Preconditions.checkState(hook != null, "NPC has already been destroyed");
+        Preconditions.checkState(!isDestroyed(), "NPC has already been destroyed");
         Preconditions.checkState(isSpawned(), "NPC is not spawned");
         hook.getEntity().remove();
         hook.onDespawn();
@@ -65,7 +65,7 @@ public abstract class NMSNPC<T extends INPCHook> extends BukkitRunnable implemen
     @Override
     public void spawn(Location toSpawn) {
         Preconditions.checkNotNull(toSpawn, "Location may not be null");
-        Preconditions.checkState(state == NPCState.DESTROYED, "NPC has been destroyed");
+        Preconditions.checkState(!isDestroyed(), "NPC has been destroyed");
         Preconditions.checkState(!isSpawned(), "NPC is already spawned");
         hook = doSpawn(toSpawn);
         hook.getEntity().setMetadata(NMSRegistry.METADATA_KEY, new FixedMetadataValue(getRegistry().getPlugin(), this));
