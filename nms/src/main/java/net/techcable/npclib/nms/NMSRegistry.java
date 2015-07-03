@@ -122,8 +122,10 @@ public class NMSRegistry implements NPCRegistry, Listener {
 
     private static NMS makeNms() {
         try {
+            if (Bukkit.getServer() == null) return null;
             String packageName = Bukkit.getServer().getClass().getPackage().getName();
             String version = packageName.substring(packageName.lastIndexOf(".") + 1);
+            if (!version.startsWith("v")) return null;
             Class<?> rawClass = Class.forName("net.techcable.npclib.nms.versions." + version + ".NMS");
             Class<? extends NMS> nmsClass = rawClass.asSubclass(NMS.class);
             Constructor<? extends NMS> constructor = nmsClass.getConstructor();
