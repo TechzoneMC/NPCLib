@@ -138,7 +138,7 @@ public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
 
     @Override
     public LivingEntity getEntity() {
-        return (LivingEntity) super.getNmsEntity();
+        return (LivingEntity) getNmsEntity().getBukkitEntity();
     }
 
     protected EntityLiving spawn(Location toSpawn, EntityType type) { // TODO Update this each version with new entities
