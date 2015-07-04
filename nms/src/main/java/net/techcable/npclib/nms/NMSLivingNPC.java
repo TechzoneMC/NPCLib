@@ -74,6 +74,7 @@ public class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements
     public void run() {
         super.run();
         if (!isSpawned()) return;
+        if (getHook().getEntity() == null) return;
         getHook().onTick();
     }
 

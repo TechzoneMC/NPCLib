@@ -20,6 +20,6 @@ public class NPCHook implements INPCHook {
 
     @Override
     public org.bukkit.entity.Entity getEntity() {
-        return nmsEntity.getBukkitEntity();
+        return nmsEntity == null ? null : nmsEntity.getBukkitEntity();
     }
 }

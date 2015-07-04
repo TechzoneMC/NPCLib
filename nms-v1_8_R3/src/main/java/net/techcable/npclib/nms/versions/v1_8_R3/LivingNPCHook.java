@@ -128,7 +128,7 @@ public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
     }
 
     public EntityLiving getNmsEntity() {
-        return (EntityLiving) super.getNmsEntity();
+        return getNmsEntity() == null ? null : (EntityLiving) super.getNmsEntity();
     }
 
     @Override
