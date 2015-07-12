@@ -10,6 +10,7 @@ import net.techcable.npclib.nms.versions.v1_8_R3.LivingNPCHook;
 import net.techcable.npclib.nms.versions.v1_8_R3.LivingNPCHook.LivingHookable;
 
 public class EntityNPCWolf extends EntityWolf implements LivingHookable {
+
     private final LivingNPC npc;
 
     @Getter

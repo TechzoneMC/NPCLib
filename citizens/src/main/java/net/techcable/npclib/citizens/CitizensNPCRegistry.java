@@ -10,7 +10,6 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.ai.tree.Precondition;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.SimpleNPCDataStore;

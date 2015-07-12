@@ -58,6 +58,9 @@ public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
     public LivingNPCHook(LivingNPC npc, Location toSpawn, EntityType type) {
         super(npc);
         this.nmsEntity = spawn(toSpawn, type);
+        getNmsEntity().spawnIn(NMS.getHandle(toSpawn.getWorld()));
+        getNmsEntity().setPositionRotation(toSpawn.getX(), toSpawn.getY(), toSpawn.getZ(), toSpawn.getYaw(), toSpawn.getPitch());
+        NMS.getHandle(toSpawn.getWorld()).addEntity(getNmsEntity());
         if (nmsEntity instanceof LivingHookable) ((LivingHookable) nmsEntity).setHook(this);
     }
 
@@ -160,7 +163,7 @@ public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
                 return new EntityNPCEnderDragon(world, getNpc(), this);
             case ENDERMAN:
                 return new EntityNPCEnderman(world, getNpc(), this);
-            case ENDERMITE :
+            case ENDERMITE:
                 return new EntityNPCEndermite(world, getNpc(), this);
             case GHAST:
                 return new EntityNPCGhast(world, getNpc(), this);
@@ -182,7 +185,7 @@ public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
                 return new EntityNPCPig(world, getNpc(), this);
             case PIG_ZOMBIE:
                 return new EntityNPCPigZombie(world, getNpc(), this);
-            case RABBIT :
+            case RABBIT:
                 return new EntityNPCRabbit(world, getNpc(), this);
             case SHEEP:
                 return new EntityNPCSheep(world, getNpc(), this);

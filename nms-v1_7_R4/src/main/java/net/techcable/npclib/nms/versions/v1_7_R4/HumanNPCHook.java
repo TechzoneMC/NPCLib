@@ -24,7 +24,6 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
     public HumanNPCHook(HumanNPC npc, Location toSpawn) {
         super(npc, toSpawn, EntityType.PLAYER);
         getNmsEntity().setHook(this);
-        showInTablist();
     }
 
     @Override
@@ -94,14 +93,18 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
 
     @Override
     public void onDespawn() {
-        super.onDespawn();
         hideFromTablist();
+        super.onDespawn();
     }
 
     @Override
     protected EntityNPCPlayer spawn(Location toSpawn, EntityType type) {
         Preconditions.checkArgument(type == EntityType.PLAYER, "HumanNPCHook can only handle players");
-        return new EntityNPCPlayer(getNpc(), toSpawn);
+        EntityNPCPlayer entity =  new EntityNPCPlayer(getNpc(), toSpawn);
+        this.nmsEntity = entity;
+        showInTablist();
+        this.nmsEntity = null;
+        return entity;
     }
 
     public void onJoin(Player joined) {

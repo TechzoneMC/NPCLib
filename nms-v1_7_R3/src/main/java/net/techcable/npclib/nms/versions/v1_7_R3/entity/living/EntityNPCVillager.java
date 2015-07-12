@@ -4,7 +4,6 @@ import lombok.*;
 
 import net.minecraft.server.v1_7_R3.DamageSource;
 import net.minecraft.server.v1_7_R3.EntityAgeable;
-import net.minecraft.server.v1_7_R3.EntityBlaze;
 import net.minecraft.server.v1_7_R3.EntityVillager;
 import net.minecraft.server.v1_7_R3.World;
 import net.techcable.npclib.LivingNPC;
@@ -12,6 +11,7 @@ import net.techcable.npclib.nms.versions.v1_7_R3.LivingNPCHook;
 import net.techcable.npclib.nms.versions.v1_7_R3.LivingNPCHook.LivingHookable;
 
 public class EntityNPCVillager extends EntityVillager implements LivingHookable {
+
     private final LivingNPC npc;
 
     @Getter

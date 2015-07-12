@@ -10,6 +10,7 @@ import net.techcable.npclib.nms.versions.v1_8_R1.LivingNPCHook;
 import net.techcable.npclib.nms.versions.v1_8_R1.LivingNPCHook.LivingHookable;
 
 public class EntityNPCIronGolem extends EntityIronGolem implements LivingHookable {
+
     private final LivingNPC npc;
 
     @Getter

@@ -5,7 +5,6 @@ import lombok.*;
 import java.util.UUID;
 
 import net.techcable.npclib.LivingNPC;
-import net.techcable.npclib.ai.AIEnvironment;
 import net.techcable.npclib.ai.AITask;
 import net.techcable.npclib.nms.ai.NMSAIEnvironment;
 
@@ -16,6 +15,7 @@ import org.bukkit.entity.LivingEntity;
 import com.google.common.base.Preconditions;
 
 public class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements LivingNPC {
+
     private final EntityType entityType;
 
     public NMSLivingNPC(NMSRegistry registry, UUID id, String name, EntityType entityType) {
@@ -83,7 +83,7 @@ public class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements
     public void addTask(AITask task) {
         getAIEnvironment().addTask(task);
     }
-    
+
     @Getter(lazy = true)
     private final NMSAIEnvironment aIEnvironment = new NMSAIEnvironment(this);
 }

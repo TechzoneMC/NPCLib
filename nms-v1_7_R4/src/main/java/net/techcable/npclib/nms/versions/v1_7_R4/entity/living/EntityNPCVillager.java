@@ -11,6 +11,7 @@ import net.techcable.npclib.nms.versions.v1_7_R4.LivingNPCHook;
 import net.techcable.npclib.nms.versions.v1_7_R4.LivingNPCHook.LivingHookable;
 
 public class EntityNPCVillager extends EntityVillager implements LivingHookable {
+
     private final LivingNPC npc;
 
     @Getter

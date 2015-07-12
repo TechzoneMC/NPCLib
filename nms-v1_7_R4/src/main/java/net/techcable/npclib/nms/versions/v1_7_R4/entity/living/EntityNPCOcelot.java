@@ -10,6 +10,7 @@ import net.techcable.npclib.nms.versions.v1_7_R4.LivingNPCHook;
 import net.techcable.npclib.nms.versions.v1_7_R4.LivingNPCHook.LivingHookable;
 
 public class EntityNPCOcelot extends EntityOcelot implements LivingHookable {
+
     private final LivingNPC npc;
 
     @Getter

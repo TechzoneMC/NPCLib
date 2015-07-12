@@ -4,13 +4,13 @@ import lombok.*;
 
 import net.minecraft.server.v1_8_R1.DamageSource;
 import net.minecraft.server.v1_8_R1.EntityGuardian;
-import net.minecraft.server.v1_8_R1.EntityRabbit;
 import net.minecraft.server.v1_8_R1.World;
 import net.techcable.npclib.LivingNPC;
 import net.techcable.npclib.nms.versions.v1_8_R1.LivingNPCHook;
 import net.techcable.npclib.nms.versions.v1_8_R1.LivingNPCHook.LivingHookable;
 
 public class EntityNPCGuardian extends EntityGuardian implements LivingHookable {
+
     private final LivingNPC npc;
 
     @Getter

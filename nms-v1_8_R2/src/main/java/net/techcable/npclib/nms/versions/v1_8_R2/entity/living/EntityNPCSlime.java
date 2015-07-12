@@ -10,6 +10,7 @@ import net.techcable.npclib.nms.versions.v1_8_R2.LivingNPCHook;
 import net.techcable.npclib.nms.versions.v1_8_R2.LivingNPCHook.LivingHookable;
 
 public class EntityNPCSlime extends EntitySlime implements LivingHookable {
+
     private final LivingNPC npc;
 
     @Getter

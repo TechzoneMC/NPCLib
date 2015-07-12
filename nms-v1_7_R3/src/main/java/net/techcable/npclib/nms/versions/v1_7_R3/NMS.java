@@ -18,7 +18,6 @@ import net.techcable.npclib.nms.ILivingNPCHook;
 import net.techcable.npclib.nms.versions.v1_7_R3.LivingNPCHook.LivingHookable;
 import net.techcable.npclib.nms.versions.v1_7_R3.entity.EntityNPCPlayer;
 import net.techcable.npclib.utils.NPCLog;
-import net.techcable.npclib.utils.Reflection;
 import net.techcable.npclib.utils.uuid.PlayerProfile;
 import net.techcable.npclib.utils.uuid.UUIDUtils;
 
@@ -102,7 +101,7 @@ public class NMS implements net.techcable.npclib.nms.NMS {
         if (getHandle((HumanNPC) npc) != null) return getHandle((HumanNPC) npc);
         EntityLiving entity = getHandle(npc.getEntity());
         if (entity instanceof LivingHookable) {
-            return ((LivingHookable)entity).getHook();
+            return ((LivingHookable) entity).getHook();
         }
         return null;
     }

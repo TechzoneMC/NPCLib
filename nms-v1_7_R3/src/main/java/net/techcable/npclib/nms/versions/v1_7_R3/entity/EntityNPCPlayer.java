@@ -11,7 +11,6 @@ import net.minecraft.server.v1_7_R3.PlayerInteractManager;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.techcable.npclib.HumanNPC;
 import net.techcable.npclib.nms.versions.v1_7_R3.HumanNPCHook;
-import net.techcable.npclib.nms.versions.v1_7_R3.LivingNPCHook.LivingHookable;
 import net.techcable.npclib.nms.versions.v1_7_R3.NMS;
 import net.techcable.npclib.nms.versions.v1_7_R3.network.NPCConnection;
 

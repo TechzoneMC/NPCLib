@@ -3,7 +3,6 @@ package net.techcable.npclib;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
@@ -26,6 +25,7 @@ import com.google.common.base.Charsets;
  * Automatically loads npclib onto the classpath while avoiding conflicts
  */
 class NPCLibLoader {
+
     public static final String GROUP_ID = "net.techcable";
     public static final String ARTIFACT_ID = "npclib";
     private static NPCLibClassLoader loader;
@@ -53,6 +53,7 @@ class NPCLibLoader {
 
     private static long lastAlert = 0;
     private static final long ALERT_INTERVAL = 10000;
+
     private static void waitTillLoaded() {
         while (true) {
             synchronized (lock) {
@@ -64,7 +65,8 @@ class NPCLibLoader {
                 }
                 try {
                     lock.wait();
-                } catch (InterruptedException e) {}
+                } catch (InterruptedException e) {
+                }
             }
         }
     }
@@ -75,9 +77,10 @@ class NPCLibLoader {
      * This method is thread safe but no other methods will block until this is loaded
      * </p>
      *
+     * @param version the version of npclib to load
+     *
      * @throws java.lang.IllegalStateException if already loaded
      * @throws java.io.IOException if an io error occured
-     * @param version the version of npclib to load
      */
     public static void loadNPCLib(String version) throws IOException {
         synchronized (lock) {
@@ -105,11 +108,12 @@ class NPCLibLoader {
     private static class NPCLibClassLoader extends URLClassLoader {
 
         public NPCLibClassLoader(URL url) {
-            super(new URL[] {url});
+            super(new URL[]{url});
         }
     }
 
     private static class MavenMetadata {
+
         private final String timestamp, buildNumber;
 
         private MavenMetadata(String timestamp, String buildNumber) {
@@ -151,7 +155,7 @@ class NPCLibLoader {
                 if (buildNumber == null) throw new IOException("Could not find build number in maven metadata");
                 return new MavenMetadata(timestamp, buildNumber);
             } catch (ParserConfigurationException | SAXException ex) {
-                throw  new IOException("Unable to parse maven metadata", ex);
+                throw new IOException("Unable to parse maven metadata", ex);
             }
         }
     }

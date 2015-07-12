@@ -35,11 +35,13 @@ public interface NPCRegistry {
      * Human npcs are <b>not</b> supported by this method
      * </p>
      *
-     * @throws java.lang.IllegalArgumentException if the entity type isn't a living entity
-     * @throws java.lang.UnsupportedOperationException if the entity type is unsupported
      * @param name the name of the npc
      * @param type use
+     *
      * @return the new npc
+     *
+     * @throws java.lang.IllegalArgumentException if the entity type isn't a living entity
+     * @throws java.lang.UnsupportedOperationException if the entity type is unsupported
      */
     public LivingNPC createLivingNPC(String name, EntityType type);
 
@@ -49,12 +51,14 @@ public interface NPCRegistry {
      * Human npcs are supported by this method
      * </p>
      *
-     * @throws java.lang.IllegalArgumentException if the entity type isn't a living entity
-     * @throws java.lang.UnsupportedOperationException if the entity type is unsupported
      * @param uuid the uuid of the new npcs
      * @param name the name of the npc
      * @param type the type of the npc to spawn
+     *
      * @return the new npc
+     *
+     * @throws java.lang.IllegalArgumentException if the entity type isn't a living entity
+     * @throws java.lang.UnsupportedOperationException if the entity type is unsupported
      */
     public LivingNPC createLivingNPC(UUID uuid, String name, EntityType type);
 

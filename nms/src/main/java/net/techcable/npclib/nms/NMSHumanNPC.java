@@ -1,12 +1,8 @@
 package net.techcable.npclib.nms;
 
-import lombok.*;
-
 import java.util.UUID;
 
 import net.techcable.npclib.HumanNPC;
-import net.techcable.npclib.ai.AITask;
-import net.techcable.npclib.nms.ai.NMSAIEnvironment;
 import net.techcable.npclib.utils.uuid.UUIDUtils;
 
 import org.bukkit.Location;
@@ -34,7 +30,7 @@ public class NMSHumanNPC extends NMSLivingNPC<IHumanNPCHook> implements HumanNPC
     @Override
     public void setSkin(UUID skin) {
         this.skin = skin;
-        getHook().setSkin(skin);
+        if (isSpawned()) getHook().setSkin(skin);
     }
 
     @Override
