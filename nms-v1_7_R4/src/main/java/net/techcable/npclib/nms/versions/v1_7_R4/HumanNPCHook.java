@@ -1,7 +1,5 @@
 package net.techcable.npclib.nms.versions.v1_7_R4;
 
-import lombok.*;
-
 import java.lang.reflect.Field;
 import java.util.UUID;
 
@@ -28,15 +26,12 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
 
     @Override
     public void setSkin(UUID id) {
-        boolean wasHidden = shownInTabList;
         NMS.setSkin(getNmsEntity().getProfile(), id);
         respawn();
     }
 
     private boolean shownInTabList;
-    private final Object packetLock = new Object();
 
-    @Synchronized("packetLock")
     @Override
     public void showInTablist() {
         if (shownInTabList) return;
@@ -50,7 +45,6 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
     }
 
     @Override
-    @Synchronized("packetLock")
     public void hideFromTablist() {
         if (!shownInTabList) return;
         PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(getNmsEntity().getProfile().getName(), false, 0);
@@ -100,7 +94,7 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
     @Override
     protected EntityNPCPlayer spawn(Location toSpawn, EntityType type) {
         Preconditions.checkArgument(type == EntityType.PLAYER, "HumanNPCHook can only handle players");
-        EntityNPCPlayer entity =  new EntityNPCPlayer(getNpc(), toSpawn);
+        EntityNPCPlayer entity = new EntityNPCPlayer(getNpc(), toSpawn);
         this.nmsEntity = entity;
         showInTablist();
         this.nmsEntity = null;

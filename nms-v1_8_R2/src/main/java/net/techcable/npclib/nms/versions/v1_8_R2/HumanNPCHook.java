@@ -1,7 +1,5 @@
 package net.techcable.npclib.nms.versions.v1_8_R2;
 
-import lombok.*;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.UUID;
@@ -34,9 +32,7 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
     }
 
     private boolean shownInTabList;
-    private final Object packetLock = new Object();
 
-    @Synchronized("packetLock")
     @Override
     public void showInTablist() {
         if (shownInTabList) return;
@@ -46,7 +42,6 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
     }
 
     @Override
-    @Synchronized("packetLock")
     public void hideFromTablist() {
         if (!shownInTabList) return;
         PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, getNmsEntity());
@@ -96,7 +91,7 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
     @Override
     protected EntityNPCPlayer spawn(Location toSpawn, EntityType type) {
         Preconditions.checkArgument(type == EntityType.PLAYER, "HumanNPCHook can only handle players");
-        EntityNPCPlayer entity =  new EntityNPCPlayer(getNpc(), toSpawn);
+        EntityNPCPlayer entity = new EntityNPCPlayer(getNpc(), toSpawn);
         this.nmsEntity = entity;
         showInTablist();
         this.nmsEntity = null;
@@ -108,7 +103,7 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
         NMS.getHandle(joined).playerConnection.sendPacket(packet);
         if (!shownInTabList) {
             PacketPlayOutPlayerInfo removePacket = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, getNmsEntity());
-            NMS.getHandle(joined).playerConnection.sendPacket(packet);
+            NMS.getHandle(joined).playerConnection.sendPacket(removePacket);
         }
     }
 }
