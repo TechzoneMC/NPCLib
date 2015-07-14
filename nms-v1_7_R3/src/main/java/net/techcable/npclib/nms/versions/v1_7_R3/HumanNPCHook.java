@@ -32,9 +32,7 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
     }
 
     private boolean shownInTabList;
-    private final Object packetLock = new Object();
 
-    @Synchronized("packetLock")
     @Override
     public void showInTablist() {
         if (shownInTabList) return;
@@ -44,7 +42,6 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
     }
 
     @Override
-    @Synchronized("packetLock")
     public void hideFromTablist() {
         if (!shownInTabList) return;
         PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(getNmsEntity().getProfile().getName(), false, 0);
