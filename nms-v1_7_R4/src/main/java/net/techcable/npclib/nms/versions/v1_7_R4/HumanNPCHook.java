@@ -35,11 +35,12 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
     @Override
     public void showInTablist() {
         if (shownInTabList) return;
-        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(getNmsEntity().getProfile().getName(), true, 0);
-        NMS.sendToAll(packet);
         if (ProtocolHack.isProtocolHack()) {
             Packet packet18 = ProtocolHack.newPlayerInfoDataAdd(getNmsEntity());
             NMS.sendToAll(packet18);
+        } else {
+            PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(getNmsEntity().getProfile().getName(), true, 0);
+            NMS.sendToAll(packet);
         }
         shownInTabList = true;
     }
@@ -47,11 +48,12 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
     @Override
     public void hideFromTablist() {
         if (!shownInTabList) return;
-        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(getNmsEntity().getProfile().getName(), false, 0);
-        NMS.sendToAll(packet);
         if (ProtocolHack.isProtocolHack()) {
             Packet packet18 = ProtocolHack.newPlayerInfoDataRemove(getNmsEntity());
             NMS.sendToAll(packet18);
+        } else {
+            PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(getNmsEntity().getProfile().getName(), false, 0);
+            NMS.sendToAll(packet);
         }
         shownInTabList = false;
     }
@@ -102,18 +104,21 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
     }
 
     public void onJoin(Player joined) {
-        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(getNmsEntity().getProfile().getName(), true, 0);
-        NMS.getHandle(joined).playerConnection.sendPacket(packet);
+
         if (ProtocolHack.isProtocolHack()) {
             Packet packet18 = ProtocolHack.newPlayerInfoDataAdd(getNmsEntity());
             NMS.getHandle(joined).playerConnection.sendPacket(packet18);
+        } else {
+            PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(getNmsEntity().getProfile().getName(), true, 0);
+            NMS.getHandle(joined).playerConnection.sendPacket(packet);
         }
         if (!shownInTabList) {
-            PacketPlayOutPlayerInfo removePacket = new PacketPlayOutPlayerInfo(getNmsEntity().getProfile().getName(), false, 0);
-            NMS.getHandle(joined).playerConnection.sendPacket(packet);
             if (ProtocolHack.isProtocolHack()) {
                 Packet removePacket18 = ProtocolHack.newPlayerInfoDataRemove(getNmsEntity());
                 NMS.getHandle(joined).playerConnection.sendPacket(removePacket18);
+            } else {
+                PacketPlayOutPlayerInfo removePacket = new PacketPlayOutPlayerInfo(getNmsEntity().getProfile().getName(), false, 0);
+                NMS.getHandle(joined).playerConnection.sendPacket(removePacket);
             }
         }
     }
