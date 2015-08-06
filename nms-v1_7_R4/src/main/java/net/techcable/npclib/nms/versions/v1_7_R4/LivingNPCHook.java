@@ -5,11 +5,14 @@ import java.util.List;
 
 import net.minecraft.server.v1_7_R4.EntityHuman;
 import net.minecraft.server.v1_7_R4.EntityLiving;
+import net.minecraft.server.v1_7_R4.EntityPlayer;
 import net.minecraft.server.v1_7_R4.ItemStack;
 import net.minecraft.server.v1_7_R4.MinecraftServer;
 import net.minecraft.server.v1_7_R4.Packet;
 import net.minecraft.server.v1_7_R4.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_7_R4.PacketPlayOutEntityStatus;
 import net.minecraft.server.v1_7_R4.World;
+import net.techcable.npclib.Animation;
 import net.techcable.npclib.LivingNPC;
 import net.techcable.npclib.nms.ILivingNPCHook;
 import net.techcable.npclib.nms.versions.v1_7_R4.ai.NPCPath;
@@ -42,9 +45,11 @@ import net.techcable.npclib.nms.versions.v1_7_R4.entity.living.EntityNPCWither;
 import net.techcable.npclib.nms.versions.v1_7_R4.entity.living.EntityNPCWolf;
 import net.techcable.npclib.nms.versions.v1_7_R4.entity.living.EntityNPCZombie;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
 
@@ -118,6 +123,24 @@ public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
     public void navigateTo(Location l) {
         NPCPath path = NPCPath.find(getNpc(), l, DEFAULT_RANGE, DEFAULT_SPEED);
         getNpc().addTask(path);
+    }
+
+    @Override
+    public void animate(Animation animation) {
+        Packet packet;
+        switch (animation) {
+            case HURT :
+                packet = new PacketPlayOutEntityStatus(getNmsEntity(), (byte)2); // 1.8 and 1.7 hurt status is 2
+                break;
+            case DEAD :
+                packet = new PacketPlayOutEntityStatus(getNmsEntity(), (byte)3); // 1.8 and 1.7 dead status is 2
+                break;
+            default :
+                throw new UnsupportedOperationException("Unsupported animation " + animation);
+        }
+        for (EntityPlayer handle : ((List<EntityPlayer>)NMS.getServer().getPlayerList().players)) {
+            handle.playerConnection.sendPacket(packet);
+        }
     }
 
     public EntityLiving getNmsEntity() {

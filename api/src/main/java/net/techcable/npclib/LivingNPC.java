@@ -57,4 +57,15 @@ public interface LivingNPC extends NPC {
      */
     public void walkTo(Location l);
 
+    /**
+     * Play the specified animation to all clients
+     *
+     * @param animation the animation to play
+     *
+     * @throws java.lang.IllegalArgumentException if the annotation can't be played on this type of npc
+     * @throws java.lang.IllegalStateException if the npc is not spawned
+     * @throws java.lang.UnsupportedOperationException if this implementation doesn't support the specified animation
+     */
+    public void animate(Animation animation);
+
 }

@@ -1,5 +1,7 @@
 package net.techcable.npclib.nms;
 
+import net.techcable.npclib.Animation;
+
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
@@ -15,4 +17,5 @@ public interface ILivingNPCHook extends INPCHook {
 
     public void navigateTo(Location l);
 
+    public void animate(Animation animation); // NOTE -- API performs validation
 }

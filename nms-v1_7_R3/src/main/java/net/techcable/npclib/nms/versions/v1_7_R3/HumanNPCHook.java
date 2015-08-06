@@ -5,13 +5,18 @@ import lombok.*;
 import java.lang.reflect.Field;
 import java.util.UUID;
 
+import net.minecraft.server.v1_7_R3.EntityPlayer;
+import net.minecraft.server.v1_7_R3.Packet;
+import net.minecraft.server.v1_7_R3.PacketPlayOutAnimation;
 import net.minecraft.server.v1_7_R3.PacketPlayOutPlayerInfo;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
+import net.techcable.npclib.Animation;
 import net.techcable.npclib.HumanNPC;
 import net.techcable.npclib.nms.IHumanNPCHook;
 import net.techcable.npclib.nms.versions.v1_7_R3.entity.EntityNPCPlayer;
 import net.techcable.npclib.utils.Reflection;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -92,6 +97,35 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
         showInTablist();
         this.nmsEntity = null;
         return entity;
+    }
+
+    @Override
+    public void animate(Animation animation) {
+        Packet packet;
+        switch (animation) {
+            case ARM_SWING :
+                packet = new PacketPlayOutAnimation(getNmsEntity(), 0);
+                break;
+            case HURT :
+                packet = new PacketPlayOutAnimation(getNmsEntity(), 1);
+                break;
+            case EAT :
+                packet = new PacketPlayOutAnimation(getNmsEntity(), 3);
+                break;
+            case CRITICAL :
+                packet = new PacketPlayOutAnimation(getNmsEntity(), 4);
+                break;
+            case MAGIC_CRITICAL :
+                packet = new PacketPlayOutAnimation(getNmsEntity(), 5);
+                break;
+            default :
+                super.animate(animation);
+                return;
+        }
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            EntityPlayer handle = NMS.getHandle(player);
+            handle.playerConnection.sendPacket(packet);
+        }
     }
 
     public void onJoin(Player joined) {

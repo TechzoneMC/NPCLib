@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.util.UUID;
 
+import net.techcable.npclib.Animation;
 import net.techcable.npclib.LivingNPC;
 import net.techcable.npclib.ai.AITask;
 import net.techcable.npclib.nms.ai.NMSAIEnvironment;
@@ -44,6 +45,13 @@ public class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements
         Preconditions.checkNotNull(l, "Location can't be null");
         Preconditions.checkArgument(l.getWorld().equals(getEntity().getWorld()), "Can't walk to a location in a different world");
         getHook().navigateTo(l);
+    }
+
+    @Override
+    public void animate(Animation animation) {
+        Preconditions.checkArgument(animation.getAppliesTo().isInstance(this), "%s can't be applied to a " + getEntity().getCustomName());
+        Preconditions.checkState(isSpawned(), "NPC isn't spawned");
+        getHook().animate(animation);
     }
 
     @Override

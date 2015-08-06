@@ -1,6 +1,7 @@
 package net.techcable.npclib.citizens;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.techcable.npclib.Animation;
 import net.techcable.npclib.LivingNPC;
 
 import org.bukkit.Location;
@@ -42,6 +43,20 @@ public class LivingCitizensNPC extends CitizensNPC implements LivingNPC {
     public void walkTo(Location l) {
         Preconditions.checkState(isAbleToWalk(), "Unable to walk");
         getHandle().getNavigator().setTarget(l);
+    }
+
+    /**
+     * {@inhertDoc}
+     * <p>
+     * Doesn't handle {@link net.techcable.npclib.Animation#HURT} and {@link net.techcable.npclib.Animation#DEAD}
+     * </p>
+     *
+     */
+    @Override
+    public void animate(Animation animation) {
+        Preconditions.checkArgument(animation.getAppliesTo().isInstance(this), "%s can't be applied to living npcs", animation.toString());
+        Preconditions.checkState(isSpawned(), "NPC isn't spawned");
+        throw new UnsupportedOperationException(animation.toString() + " is unimplemented for living npcs");
     }
 
     @Override

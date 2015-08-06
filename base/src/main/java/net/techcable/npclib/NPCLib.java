@@ -1,6 +1,5 @@
 package net.techcable.npclib;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,7 @@ import org.bukkit.plugin.Plugin;
 
 public class NPCLib {
 
-    public static final String VERSION = "2.0.0-beta1-SNAPSHOT";
+    public static final String VERSION = "2.0.0-beta1";
     public static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
 
     private NPCLib() {
@@ -27,30 +26,30 @@ public class NPCLib {
     private static Map<String, NMSRegistry> registryMap = new HashMap<>();
 
     public static NPCRegistry getNPCRegistry(Plugin plugin) {
-        if (hasCitizens()) {
-            NPCMetrics.addUsingPlugin(plugin);
-            return CitizensNPCRegistry.getRegistry(plugin);
-        } else if (hasNMS()) {
+        if (hasNMS()) {
             NPCMetrics.addUsingPlugin(plugin);
             if (defaultNMS == null) {
                 defaultNMS = new NMSRegistry(plugin);
             }
             return defaultNMS;
+        } else if (hasCitizens()) {
+            NPCMetrics.addUsingPlugin(plugin);
+            return CitizensNPCRegistry.getRegistry(plugin);
         } else {
             throw new UnsupportedVersionException("This version of minecraft isn't supported, please install citizens");
         }
     }
 
     public static NPCRegistry getNPCRegistry(String name, Plugin plugin) {
-        if (hasCitizens()) {
-            NPCMetrics.addUsingPlugin(plugin);
-            return CitizensNPCRegistry.getRegistry(name, plugin);
-        } else if (hasNMS()) {
+        if (hasNMS()) {
             NPCMetrics.addUsingPlugin(plugin);
             if (!registryMap.containsKey(name)) {
                 registryMap.put(name, new NMSRegistry(plugin));
             }
             return registryMap.get(name);
+        } else if (hasCitizens()) {
+            NPCMetrics.addUsingPlugin(plugin);
+            return CitizensNPCRegistry.getRegistry(name, plugin);
         } else {
             throw new UnsupportedVersionException("This version of minecraft isn't supported, please install citizens");
         }
@@ -77,20 +76,17 @@ public class NPCLib {
         }
     }
 
-    private static Field storedRegistriesField;
-
     public static boolean isNPC(Entity e) {
-        if (hasNMS()) {
+        if (hasCitizens()) {
+            for (CitizensNPCRegistry registry : CitizensNPCRegistry.getRegistries()) {
+                if (registry.isNPC(e)) return true;
+            }
+        } else if (hasNMS()) {
             if (e.hasMetadata(NMSRegistry.METADATA_KEY)) {
                 List<MetadataValue> metadataList = e.getMetadata(NMSRegistry.METADATA_KEY);
                 for (MetadataValue metadataValue : metadataList) {
                     if (metadataValue.value() instanceof NPC) return true;
                 }
-            }
-            return false;
-        } else if (hasCitizens()) {
-            for (CitizensNPCRegistry registry : CitizensNPCRegistry.getRegistries()) {
-                if (registry.isNPC(e)) return true;
             }
         }
         return false;
