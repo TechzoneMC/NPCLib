@@ -94,7 +94,7 @@ public class MojangLookup implements Lookup {
         } else {
             dashed = raw;
         }
-        return UUID.fromString(raw);
+        return UUID.fromString(dashed);
     }
 
     @Override
