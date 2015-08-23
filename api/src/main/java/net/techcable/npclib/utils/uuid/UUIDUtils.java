@@ -38,7 +38,7 @@ import com.google.common.base.Charsets;
 public class UUIDUtils {
 
     @Getter
-    private static final CachingLookup lookup = new CachingLookup(new BackupLookup(new MCPlayerIndexLookup(), new MojangLookup()));
+    private static final CachingLookup lookup = new CachingLookup(new BackupLookup(new MojangLookup(), new MCPlayerIndexLookup()));
 
     /**
      * Retreive a player's UUID based on it's name
