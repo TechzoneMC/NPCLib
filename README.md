@@ -22,11 +22,11 @@ Easy spawning of npcs
 ````
 ###Dependency
 ````xml
-<repository>
-  <groupId>techcable.minecraft</groupId>
-  <artifactId>npclib-base</artifactId>
+<dependency>
+  <groupId>net.techcable</groupId>
+  <artifactId>npclib</artifactId>
   <version>LATEST</version>
-</repository>
+</dependency>
 ````
 
 ##Usage
