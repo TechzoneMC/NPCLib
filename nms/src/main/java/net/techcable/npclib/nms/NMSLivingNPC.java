@@ -24,9 +24,12 @@ public class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements
         this.entityType = entityType;
     }
 
+    private String name;
+
     @Override
     public void setName(String s) {
-        getHook().setName(s);
+        this.name = s;
+        if (isSpawned()) getHook().setName(s);
     }
 
     @Override
@@ -37,7 +40,9 @@ public class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements
     @Override
     @SuppressWarnings("uncheked")
     protected T doSpawn(Location toSpawn) {
-        return (T) NMSRegistry.getNms().spawnLivingNPC(toSpawn, this, entityType);
+        T npc = (T) NMSRegistry.getNms().spawnLivingNPC(toSpawn, this, entityType);
+        if (name != null) npc.setName(this.name);
+        return npc;
     }
 
     @Override
