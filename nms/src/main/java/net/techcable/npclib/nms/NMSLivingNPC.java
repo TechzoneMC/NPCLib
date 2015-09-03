@@ -24,11 +24,9 @@ public class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements
         this.entityType = entityType;
     }
 
-    private String name;
-
     @Override
     public void setName(String s) {
-        this.name = s;
+        super.setName(s);
         if (isSpawned()) getHook().setName(s);
     }
 
@@ -41,12 +39,12 @@ public class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements
     @SuppressWarnings("uncheked")
     protected T doSpawn(Location toSpawn) {
         T npc = (T) NMSRegistry.getNms().spawnLivingNPC(toSpawn, this, entityType);
-        if (name != null) npc.setName(this.name);
         return npc;
     }
 
     @Override
     public void walkTo(Location l) {
+        Preconditions.checkState(isSpawned(), "Can't walk if not spawned");
         Preconditions.checkNotNull(l, "Location can't be null");
         Preconditions.checkArgument(l.getWorld().equals(getEntity().getWorld()), "Can't walk to a location in a different world");
         getHook().navigateTo(l);

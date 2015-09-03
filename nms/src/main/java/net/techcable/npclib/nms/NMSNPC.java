@@ -19,6 +19,7 @@ public abstract class NMSNPC<T extends INPCHook> extends BukkitRunnable implemen
     private final NMSRegistry registry;
     private T hook;
     private final UUID id;
+    @Setter
     private String name;
 
     private NPCState state = NPCState.NOT_SPAWNED;
