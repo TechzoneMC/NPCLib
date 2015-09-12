@@ -54,8 +54,10 @@ public interface LivingNPC extends NPC {
      * @param l the location to walk to
      *
      * @throws java.lang.IllegalStateException if not in a condition to walk
+     * @throws PathNotFoundException if the NPC could not walk to the specified location
+     * @throws NullPointerException if the location is null
      */
-    public void walkTo(Location l);
+    public void walkTo(Location l) throws PathNotFoundException;
 
     /**
      * Play the specified animation to all clients

@@ -18,6 +18,7 @@ import net.minecraft.server.v1_8_R3.PathfinderNormal;
 import net.minecraft.server.v1_8_R3.World;
 import net.techcable.npclib.Animation;
 import net.techcable.npclib.LivingNPC;
+import net.techcable.npclib.PathNotFoundException;
 import net.techcable.npclib.nms.ILivingNPCHook;
 import net.techcable.npclib.nms.versions.v1_8_R3.ai.NPCPath;
 import net.techcable.npclib.nms.versions.v1_8_R3.entity.living.EntityNPCBat;
@@ -95,8 +96,9 @@ public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
     public static final int DEFAULT_RANGE = 45;
 
     @Override
-    public void navigateTo(Location l) {
+    public void navigateTo(Location l) throws PathNotFoundException {
         NPCPath path = NPCPath.find(getNpc(), l, DEFAULT_RANGE, DEFAULT_SPEED);
+        if (path == null) throw new PathNotFoundException(l, getEntity().getLocation());
         getNpc().addTask(path);
     }
 

@@ -41,6 +41,7 @@ public class LivingCitizensNPC extends CitizensNPC implements LivingNPC {
 
     @Override
     public void walkTo(Location l) {
+        Preconditions.checkNotNull(l, "Null destination");
         Preconditions.checkState(isAbleToWalk(), "Unable to walk");
         getHandle().getNavigator().setTarget(l);
     }

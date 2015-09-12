@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import net.techcable.npclib.Animation;
 import net.techcable.npclib.LivingNPC;
+import net.techcable.npclib.PathNotFoundException;
 import net.techcable.npclib.ai.AITask;
 import net.techcable.npclib.nms.ai.NMSAIEnvironment;
 
@@ -43,7 +44,7 @@ public class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements
     }
 
     @Override
-    public void walkTo(Location l) {
+    public void walkTo(Location l) throws PathNotFoundException {
         Preconditions.checkState(isSpawned(), "Can't walk if not spawned");
         Preconditions.checkNotNull(l, "Location can't be null");
         Preconditions.checkArgument(l.getWorld().equals(getEntity().getWorld()), "Can't walk to a location in a different world");
