@@ -85,7 +85,7 @@ class NPCLibLoader {
     public static void loadNPCLib(String version) throws IOException {
         synchronized (lock) {
             if (loader != null) throw new IllegalStateException("Already loaded");
-            String versionUrl = "http://repo.techcable.net/content/groups/public/" + GROUP_ID.replace('.', '/') + "/" + ARTIFACT_ID + "/" + version;
+            String versionUrl = "https://repo.techcable.net/content/groups/public/" + GROUP_ID.replace('.', '/') + "/" + ARTIFACT_ID + "/" + version;
             String baseUrl;
             if (version.endsWith("SNAPSHOT")) {
                 MavenMetadata metadata = MavenMetadata.parse(versionUrl + '/' + "maven-metadata.xml");

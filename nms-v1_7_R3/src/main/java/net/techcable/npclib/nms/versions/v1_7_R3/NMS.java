@@ -2,14 +2,19 @@ package net.techcable.npclib.nms.versions.v1_7_R3;
 
 import java.util.Collection;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 
 import net.minecraft.server.v1_7_R3.EntityLiving;
 import net.minecraft.server.v1_7_R3.EntityPlayer;
 import net.minecraft.server.v1_7_R3.MinecraftServer;
 import net.minecraft.server.v1_7_R3.Packet;
 import net.minecraft.server.v1_7_R3.WorldServer;
+import net.minecraft.util.com.google.common.cache.LoadingCache;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
-import net.minecraft.util.com.mojang.authlib.properties.Property;
 import net.techcable.npclib.HumanNPC;
 import net.techcable.npclib.LivingNPC;
 import net.techcable.npclib.NPC;
@@ -18,8 +23,6 @@ import net.techcable.npclib.nms.ILivingNPCHook;
 import net.techcable.npclib.nms.versions.v1_7_R3.LivingNPCHook.LivingHookable;
 import net.techcable.npclib.nms.versions.v1_7_R3.entity.EntityNPCPlayer;
 import net.techcable.npclib.utils.NPCLog;
-import net.techcable.npclib.utils.uuid.PlayerProfile;
-import net.techcable.npclib.utils.uuid.UUIDUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -32,7 +35,6 @@ import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONObject;
 
 public class NMS implements net.techcable.npclib.nms.NMS {
 
@@ -112,32 +114,28 @@ public class NMS implements net.techcable.npclib.nms.NMS {
         }
     }
 
+    private static final Cache<UUID, GameProfile> properties = CacheBuilder.newBuilder()
+            .expireAfterAccess(5, TimeUnit.MINUTES)
+            .build(new CacheLoader<UUID, GameProfile>() {
+
+                @Override
+                public GameProfile load(UUID uuid) throws Exception {
+                    return MinecraftServer.getServer().av().fillProfileProperties(new GameProfile(uuid, null), true);
+                }
+            });
+
     public static void setSkin(GameProfile profile, UUID skinId) {
-        profile.getProperties().get("textures").clear();
-        if (skinId == null) return;
-        if (Bukkit.getPlayer(skinId) != null) { // Avoid a lookup if the player is online :)
-            EntityPlayer playerWithSkin = getHandle(Bukkit.getPlayer(skinId));
-            Collection<Property> textureProperties = playerWithSkin.getProfile().getProperties().get("textures");
-            profile.getProperties().get("textures").addAll(textureProperties);
-            return;
+        GameProfile skinProfile;
+        if (Bukkit.getPlayer(skinId) != null) {
+            skinProfile = getHandle(Bukkit.getPlayer(skinId)).getProfile();
+        } else {
+            skinProfile = properties.getUnchecked(skinId);
         }
-        PlayerProfile skinProfile = UUIDUtils.getLookup().lookup(skinId);
-        if (skinProfile == null) {
-            NPCLog.warn("Unable to get skin for uuid %s", skinId);
-            return;
-        }
-        if (skinProfile.getProperties() == null || skinProfile.getProperties().isEmpty()) return;
-        for (Object element : skinProfile.getProperties()) {
-            if (!(element instanceof JSONObject)) continue;
-            JSONObject object = (JSONObject) element;
-            if (!(object.get("name") instanceof String)) continue;
-            String name = (String) object.get("name");
-            if (!"textures".equals(name)) continue;
-            if (!(object.get("value") instanceof String)) continue;
-            String signature = object.get("signature") instanceof String ? (String) object.get("signature") : null;
-            String value = (String) object.get("value");
-            Property property = new Property(name, value, signature);
-            profile.getProperties().put(name, property);
+        if (skinProfile.getProperties().containsKey("textures")) {
+            profile.getProperties().removeAll("textures");
+            profile.getProperties().putAll("textures", skinProfile.getProperties().get("textures"));
+        } else {
+            NPCLog.debug("Skin with uuid not found: " + skinId);
         }
     }
 }

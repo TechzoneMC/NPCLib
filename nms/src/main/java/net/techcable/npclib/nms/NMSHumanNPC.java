@@ -2,9 +2,11 @@ package net.techcable.npclib.nms;
 
 import java.util.UUID;
 
-import net.techcable.npclib.HumanNPC;
-import net.techcable.npclib.utils.uuid.UUIDUtils;
+import com.google.common.base.Preconditions;
 
+import net.techcable.npclib.HumanNPC;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -35,7 +37,11 @@ public class NMSHumanNPC extends NMSLivingNPC<IHumanNPCHook> implements HumanNPC
 
     @Override
     public void setSkin(String skin) {
-        UUID id = UUIDUtils.getId(skin);
+        Preconditions.checkNotNull(skin, "Skin is null");
+        // Hacky uuid load
+        UUID id = Bukkit.getOfflinePlayer(skin).getUniqueId();
+        // If the uuid's variant is '3' than it must be an offline uuid
+        Preconditions.checkArgument(id.variant() != 3, "Invalid player name %s", skin);
         setSkin(id);
     }
 
@@ -45,7 +51,7 @@ public class NMSHumanNPC extends NMSLivingNPC<IHumanNPCHook> implements HumanNPC
     public void setShowInTabList(boolean show) {
         boolean wasShownInTabList = showInTabList;
         this.showInTabList = show;
-        if (showInTabList != wasShownInTabList) {
+        if (isSpawned() && showInTabList != wasShownInTabList) {
             if (showInTabList) {
                 getHook().showInTablist();
             } else {

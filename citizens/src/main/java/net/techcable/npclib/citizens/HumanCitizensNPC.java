@@ -2,16 +2,15 @@ package net.techcable.npclib.citizens;
 
 import java.util.UUID;
 
+import com.google.common.base.Preconditions;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.techcable.npclib.Animation;
 import net.techcable.npclib.HumanNPC;
-import net.techcable.npclib.utils.uuid.UUIDUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
-import com.google.common.base.Preconditions;
 
 public class HumanCitizensNPC extends LivingCitizensNPC implements HumanNPC {
 
@@ -38,9 +37,11 @@ public class HumanCitizensNPC extends LivingCitizensNPC implements HumanNPC {
 
     @Override
     public void setSkin(String skin) {
-        if (skin == null) return;
-        UUID id = UUIDUtils.getId(skin);
-        if (id == null) return;
+        Preconditions.checkNotNull(skin, "Skin is null");
+        // Hacky uuid load
+        UUID id = Bukkit.getOfflinePlayer(skin).getUniqueId();
+        // If the uuid's variant is '3' than it must be an offline uuid
+        Preconditions.checkArgument(id.variant() != 3, "Invalid player name %s", skin);
         setSkin(id);
     }
 

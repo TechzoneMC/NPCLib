@@ -9,6 +9,8 @@ import org.bukkit.Bukkit;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class NPCLog {
 
+    public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("npclib.debug", "false"));
+
     public static final String PREFIX = "NPCLib";
 
     public static void info(String msg) {
@@ -35,6 +37,18 @@ public class NPCLog {
         log(Level.SEVERE, msg, t);
     }
 
+    public static void debug(String msg) {
+        if (DEBUG) {
+            log(Level.INFO, msg);
+        }
+    }
+
+    public static void debug(String msg, Throwable t) {
+        if (DEBUG) {
+            log(Level.INFO, msg, t);
+        }
+    }
+
     private static void log(Level level, String msg, Throwable t) {
         Bukkit.getLogger().log(level, PREFIX + " " + msg, t);
     }
@@ -46,5 +60,4 @@ public class NPCLog {
     private static void log(Level level, String msg) {
         Bukkit.getLogger().log(level, msg);
     }
-
 }
