@@ -14,8 +14,6 @@ public interface NMS {
 
     public IHumanNPCHook spawnHumanNPC(Location toSpawn, HumanNPC npc);
 
-    public ILivingNPCHook spawnLivingNPC(Location toSpawn, LivingNPC npc, EntityType type);
-
     //Events
     public void onJoin(Player joined, Collection<? extends NPC> npcs);
 }

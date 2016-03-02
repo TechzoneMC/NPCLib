@@ -16,7 +16,7 @@ import org.bukkit.entity.LivingEntity;
 
 import com.google.common.base.Preconditions;
 
-public class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements LivingNPC {
+public abstract class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements LivingNPC {
 
     private final EntityType entityType;
 
@@ -34,13 +34,6 @@ public class NMSLivingNPC<T extends ILivingNPCHook> extends NMSNPC<T> implements
     @Override
     public LivingEntity getEntity() {
         return (LivingEntity) super.getEntity();
-    }
-
-    @Override
-    @SuppressWarnings("uncheked")
-    protected T doSpawn(Location toSpawn) {
-        T npc = (T) NMSRegistry.getNms().spawnLivingNPC(toSpawn, this, entityType);
-        return npc;
     }
 
     @Override

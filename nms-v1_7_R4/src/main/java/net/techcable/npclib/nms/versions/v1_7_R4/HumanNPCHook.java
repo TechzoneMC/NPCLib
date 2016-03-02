@@ -27,6 +27,7 @@ public class HumanNPCHook extends LivingNPCHook implements IHumanNPCHook {
     public HumanNPCHook(HumanNPC npc, Location toSpawn) {
         super(npc, toSpawn, EntityType.PLAYER);
         getNmsEntity().setHook(this);
+        getNmsEntity().getWorld().players.remove(getNmsEntity());
     }
 
     @Override

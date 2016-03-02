@@ -55,12 +55,7 @@ public class NMSRegistry implements NPCRegistry, Listener {
 
     @Override
     public LivingNPC createLivingNPC(UUID uuid, String name, EntityType type) {
-        Preconditions.checkNotNull(uuid, "Cant have null id");
-        Preconditions.checkNotNull(name, "Cant have null name");
-        if (type == EntityType.PLAYER) return createHumanNPC(uuid, name);
-        NMSLivingNPC npc = new NMSLivingNPC(this, uuid, name, type);
-        npcs.put(uuid, npc);
-        return npc;
+        throw new UnsupportedOperationException("Living npcs aren't supported");
     }
 
     @Getter(AccessLevel.NONE)

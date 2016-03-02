@@ -47,15 +47,9 @@ public class NMS implements net.techcable.npclib.nms.NMS {
         return instance;
     }
 
-
     @Override
     public IHumanNPCHook spawnHumanNPC(Location toSpawn, HumanNPC npc) {
         return new HumanNPCHook(npc, toSpawn);
-    }
-
-    @Override
-    public ILivingNPCHook spawnLivingNPC(Location toSpawn, LivingNPC npc, EntityType type) {
-        return new LivingNPCHook(npc, toSpawn, type);
     }
 
     @Override
