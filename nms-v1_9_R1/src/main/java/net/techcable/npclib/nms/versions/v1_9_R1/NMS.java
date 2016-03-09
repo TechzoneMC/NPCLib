@@ -54,11 +54,6 @@ public class NMS implements net.techcable.npclib.nms.NMS {
     }
 
     @Override
-    public ILivingNPCHook spawnLivingNPC(Location toSpawn, LivingNPC npc, EntityType type) {
-        return new LivingNPCHook(npc, toSpawn, type);
-    }
-
-    @Override
     public void onJoin(Player joined, Collection<? extends NPC> npcs) {
         for (NPC npc : npcs) {
             if (!(npc instanceof HumanNPC)) continue;

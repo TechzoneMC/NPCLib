@@ -49,5 +49,11 @@
             <version>${parent.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>net.techcable.npclib</groupId>
+            <artifactId>nms-v1_9_R1</artifactId>
+            <version>${parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

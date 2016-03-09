@@ -39,6 +39,7 @@
         <module>nms-v1_8_R1</module>
         <module>nms-v1_8_R2</module>
         <module>nms-v1_8_R3</module>
+        <module>nms-v1_9_R1</module>
         <module>nms</module>
         <module>citizens</module>
         <module>base</module>
