@@ -44,7 +44,7 @@ public class LivingNPCHook extends NPCHook implements ILivingNPCHook {
         getNmsEntity().aL = yaw; // MCP -- prevRotationYawHead Srg -- field_70758_at
     }
 
-    private final ItemStack[] lastEquipment = new ItemStack[5];
+    private final ItemStack[] lastEquipment = new ItemStack[6];
 
     public static float clampYaw(float yaw) {
         while (yaw < -180.0F) {
